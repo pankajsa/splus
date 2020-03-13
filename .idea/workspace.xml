@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="27bdce46-458b-4f07-b850-c6217651f329" name="Default Changelist" comment="" />
+    <list default="true" id="27bdce46-458b-4f07-b850-c6217651f329" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/splus/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/splus/SolaceMgr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/splus.iml" beforeDir="false" afterPath="$PROJECT_DIR$/splus.iml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -9,6 +14,16 @@
   </component>
   <component name="CodeStyleSettingsInfer">
     <option name="done" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="1" />
@@ -26,6 +41,11 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/splus" />
+    </key>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -36,7 +56,9 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1583650194817</updated>
-      <workItem from="1583650199641" duration="62000" />
+      <workItem from="1583650199641" duration="1789000" />
+      <workItem from="1583655491841" duration="4422000" />
+      <workItem from="1583979541747" duration="19506000" />
     </task>
     <servers />
   </component>
@@ -44,6 +66,10 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="395" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1583650475984">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state x="395" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1680.1027@0.23.1680.1027" timestamp="1583650475984" />
     <state x="432" y="155" key="SettingsEditor" timestamp="1583650261573">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
