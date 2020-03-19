@@ -29,13 +29,13 @@ msgvpn enable|disable
 
 
 ### ACL Management
-aclprofile create --name
-aclprofile show --name
-aclprofile remove --name
+aclprofile create --name  
+aclprofile show --name  
+aclprofile remove --name  
 aclprofile list
 
 ### Client Management
-clientprofile create --name \
+clientprofile create --name 
 clientprofile show --name \
 clientprofile remove --name \
 clientprofile list 
