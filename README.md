@@ -35,30 +35,28 @@ aclprofile remove --name
 aclprofile list
 
 ### Client Management
-clientprofile create --name
-clientprofile show --name
-clientprofile remove --name
-clientprofile list
+clientprofile create --name \
+clientprofile show --name \
+clientprofile remove --name \
+clientprofile list 
 
 ### Queue Management
-queue create --qname
-queue show --qname
-queue remove --qname
-queue list
+queue create --qname \
+queue show --qname \
+queue remove --qname \
+queue list 
 
-queue subscription --clear
-queue subscription add --queueName <qname> <topicname>
+queue subscription --clear \
+queue subscription add --queueName <qname> <topicname> 
 
 
 
 ### Service Management
 
-smf enable  --allow-downgrade --max-connections
+smf enable  --allow-downgrade --max-connections \
 web enable  --allow-downgrade --max-connections
 
-
-
-mqtt enable --listen-port --tls-listen-port
+mqtt enable --listen-port --tls-listen-port \
 mqtt disable
 
 mqtt retain enable|disable
@@ -68,10 +66,10 @@ amqp enable|disable
 smf enable|disable
 
 ### Broker Service Management
-broker mqtt enable
-broker mqtt retain enable|disable
-broker rest enable|disable
-broker amqp enable|disable
+broker mqtt enable \
+broker mqtt retain enable|disable \
+broker rest enable|disable \
+broker amqp enable|disable \
 smf enable|disable
 
 ### Event Mesh
