@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="27bdce46-458b-4f07-b850-c6217651f329" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/splus/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/splus/SolaceMgr.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/splus.iml" beforeDir="false" afterPath="$PROJECT_DIR$/splus.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/splus/SolaceMgr.py" beforeDir="false" afterPath="$PROJECT_DIR$/splus/SolaceMgr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/splus/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/splus/cli.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +58,11 @@
       <updated>1583650194817</updated>
       <workItem from="1583650199641" duration="1789000" />
       <workItem from="1583655491841" duration="4422000" />
-      <workItem from="1583979541747" duration="19506000" />
+      <workItem from="1583979541747" duration="20735000" />
+      <workItem from="1584509509910" duration="93000" />
+      <workItem from="1584509628943" duration="6140000" />
+      <workItem from="1584592590187" duration="27000" />
+      <workItem from="1584592635039" duration="115000" />
     </task>
     <servers />
   </component>
@@ -70,6 +74,10 @@
       <screen x="0" y="23" width="1680" height="1027" />
     </state>
     <state x="395" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1680.1027@0.23.1680.1027" timestamp="1583650475984" />
+    <state x="619" y="259" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1584592602056">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state x="619" y="259" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.23.1680.1027@0.23.1680.1027" timestamp="1584592602056" />
     <state x="432" y="155" key="SettingsEditor" timestamp="1583650261573">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>

@@ -4,8 +4,6 @@ import os
 
 from SolaceMgr import SolaceMgr
 
-
-
 _global_test_options = [
     click.option('--msgvpn', default="default", help='Name of the MsgVPN', show_default=True),
     click.option('--url', default="http://localhost:8080", help='MsgVPN URL'),
@@ -22,16 +20,29 @@ def my_global_options(func):
         func = option(func)
     return func
 
-sm = SolaceMgr(username="admin", password="admin", url="http://localhost:8080")
+
+def initSetup(debug):
+    logging.basicConfig(format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+                        datefmt='%Y-%m-%d:%H:%M:%S',
+                        level=(logging.DEBUG if debug else logging.INFO) ,
+                        )
+    global logger
+    logger = logging.getLogger(__name__)
 
 
 @click.group()
-@click.option('--debug/--no-debug', default=False)
+@click.option('--debug/--no-debug', default=True)
 @click.option('--msgvpn', required=False)
 @click.pass_context
 def cli(ctx, debug, msgvpn):
-    # click.echo('Debug mode is %s' % ('on' if debug else 'off'))
-    # click.echo(f'msgvpn  {msgvpn}')
+    # logger.debug('Debug mode is %s' % ('on' if debug else 'off'))
+    initSetup(debug)
+    logger.info(f"Debug Mode {debug}")
+
+    global sm
+    sm = SolaceMgr(username="admin", password="admin", url="http://localhost:8080")
+
+    logger.debug(f'msgvpn  {msgvpn}')
 
     ctx.ensure_object(dict)
     ctx.obj['DEBUG'] = debug
@@ -44,8 +55,8 @@ def cli(ctx, debug, msgvpn):
               help='Directory (or module path) to start discovery ("test" default)')
 def test(start_directory, **kwargs):
     # Run tests here
-    click.echo(f"test {start_directory}")
-    print(kwargs)
+    logger.debug(f"test {start_directory}")
+    debug.log(kwargs)
     pass
 
 
@@ -68,8 +79,8 @@ def cover(ctx, format, verbosity, fail_fast):
 @click.option('--password', required=True)
 @click.pass_context
 def config(ctx, msgvpn, url, username, password):
-    click.echo('=====>Debug is %s' % (ctx.obj['DEBUG'] and 'on' or 'off'))
-    click.echo(f"I'll handle the Config {msgvpn} {url} {username} {password}")
+    logger.debug('=====>Debug is %s' % (ctx.obj['DEBUG'] and 'on' or 'off'))
+    logger.debug(f"I'll handle the Config {msgvpn} {url} {username} {password}")
     """
     Store configuration values in a file.
     """
@@ -94,27 +105,28 @@ def msgvpn(verbose, msgvpn, **kwargs):
 @click.option('--enable/--disable', default=False, show_default=True)
 @click.argument("msgvpn")
 def msgvpn_create(msgvpn, basicauth, **kwargs):
-    click.echo('msgvpn_create')
-    click.echo(f'msgvpn {msgvpn} basicauth {basicauth}')
-    print(kwargs)
-    dict = {
-        "authenticationBasicEnabled": True if 'basicauth' in kwargs else False,
-        "dmrEnabled": kwargs['dmr'],
-        "enabled": kwargs['enable'],
-    }
-    res = sm.createVpn(msgvpn, dict)
-    print(res)
-
-
+    try:
+        logger.debug("msgvpn_create - START")
+        logger.debug(kwargs)
+        dict = {
+            "authenticationBasicEnabled": True if 'basicauth' in kwargs else False,
+            "dmrEnabled": kwargs['dmr'],
+            "enabled": kwargs['enable'],
+        }
+        res = sm.createVpn(msgvpn, dict)
+        logger.debug(res)
+        logger.debug("msgvpn_create - END")
+    except Exception as ex:
+        logger.error(f"msgvpn_create - END + {ex}")
 
 @msgvpn.command(name='delete')
 @click.argument("msgvpn")
 @my_global_options
 def msgvpn_delete(msgvpn,**kwargs):
-    click.echo('msgvpn_delete')
-    print(kwargs)
+    logger.debug('msgvpn_delete')
+    debug.log(kwargs)
     res = sm.deleteVpn(msgvpn)
-    print(res)
+    debug.log(res)
 
 
 
@@ -122,9 +134,9 @@ def msgvpn_delete(msgvpn,**kwargs):
 @cli.group()  # @cli, not @click!
 @my_global_options
 def aclprofile(verbose, msgvpn, **kwargs):
-    # click.echo(f'aclprofile  {msgvpn}  ')
-    # click.echo('Verbosity: %s' % verbose)
-    # print(kwargs)
+    # logger.debug(f'aclprofile  {msgvpn}  ')
+    # logger.debug('Verbosity: %s' % verbose)
+    # debug.log(kwargs)
     pass
 
 
@@ -132,20 +144,11 @@ def aclprofile(verbose, msgvpn, **kwargs):
 @my_global_options
 @click.option('--vpn2', default="abc")
 def aclprofile_create(basicauth, **kwargs):
-    click.echo('aclprofile_create')
-    click.echo(f'basicauth {basicauth}')
-    print(kwargs)
+    logger.debug('aclprofile_create')
+    logger.debug(f'basicauth {basicauth}')
+    debug.log(kwargs)
 
 
 if __name__ == '__main__':
-    logging.basicConfig(format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
-                        datefmt='%Y-%m-%d:%H:%M:%S',
-                        level=logging.DEBUG)
-    logger = logging.getLogger(__name__)
-    # logger.debug("This is a debug log")
-    # sm = SolaceMgr(username="admin", password="admin", url="http://localhost:8080")
-    # sm.deleteVpn("aaa3")
-    # sm.getVpn("aaa3")
-    # sm.createVpn("aaa3")
     cli()
 
