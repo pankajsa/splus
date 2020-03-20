@@ -1,20 +1,23 @@
 #!/usr/bin/python
 import logging
-import logging.config
-
 import click
 import os
 
 from SolaceMgr import SolaceMgr
 from Vpn import Vpn
+# from vpn_commands import aclprofile
 from common import *
 from commands import *
+
+
 import configparser
+
+
 
 
 class GetDefaults:
     def __init__(self, ctx, kwargs):
-        logger.debug('GetDefaults - Start')
+        # logger.debug('GetDefaults - Start')
         # logger.debug(f"KWARGS {kwargs}")
 
         config = configparser.ConfigParser()
@@ -44,7 +47,9 @@ class GetDefaults:
         global sm
         sm = SolaceMgr(username=obj["broker-username"], password=obj["broker-password"], url=obj["broker-url"])
         # logger.debug('GetDefaults - End')
-        pass
+
+
+pass
 
 
 
@@ -62,6 +67,17 @@ def initSetup(debug):
 @click.option('--debug/--no-debug', default=True)
 @click.pass_context
 def cli(ctx, debug):
+    # logger.debug('Debug mode is %s' % ('on' if debug else 'off'))
+
+    initSetup(debug)
+
+    # ctx.ensure_object(dict)
+    # ctx.obj['TEST1'] = 1
+    # GetDefaults(ctx.obj)
+    # logger.info(f"DEFAULTS {ctx.obj}")
+    # ctx.obj['DEBUG'] = debug
+
+
     pass
 
 
@@ -91,27 +107,75 @@ def config(ctx, default_vpn, broker_url, broker_username, broker_password):
 
 
 cli.add_command(aclprofile)
-cli.add_command(msgvpn)
+
+
+@cli.group()  # @cli, not @click!
+@my_global_options
+def msgvpn(**kwargs):
+    pass
+
+@cli.command()
+@click.option(
+    '--default-vpn',
+    help='your API key for the OpenWeatherMap API',
+)
+@click.option(
+    '--config-file', '-c',
+    type=click.Path(),
+    default='~/.splus.cfg',
+)
+def test1(default_vpn, config_file):
+    print(f'test1 {default_vpn} {config_file}')
+
+@msgvpn.command(name='create')
+@my_global_options
+@click.option('--basicauth', is_flag=True, default=False)
+@click.option('--dmr/--no-dmr', default=False, show_default=True)
+@click.option('--enable/--disable', default=False, show_default=True)
+@click.argument("vpnname")
+@click.pass_context
+def msgvpn_create(ctx, vpnname, **kwargs):
+    try:
+        # logger.debug(f"msgvpn_create - START {vpnname}")
+        GetDefaults(ctx, kwargs)
+
+        dict = {
+            "authenticationBasicEnabled": True if 'basicauth' in kwargs else False,
+            "dmrEnabled": kwargs['dmr'],
+            "enabled": kwargs['enable'],
+        }
+        vpn = Vpn(sm)
+        res = vpn.createVpn(vpnname, dict)
+        logger.debug(res)
+        logger.debug("msgvpn_create - END")
+    except Exception as ex:
+        logger.error(f"msgvpn_create - END + {ex}")
+
+
+@msgvpn.command(name='delete')
+@click.argument("vpnname")
+@my_global_options
+@click.pass_context
+def msgvpn_delete(ctx, vpnname, **kwargs):
+    GetDefaults(ctx, kwargs)
+    vpn = Vpn(sm)
+    res = vpn.deleteVpn(vpnname)
+    logging.debug(res)
+    print('-----------')
+    print(res)
+
+@msgvpn.command(name='list')
+@my_global_options
+@click.pass_context
+def msgvpn_list(ctx, **kwargs):
+    GetDefaults(ctx, kwargs)
+    vpn = Vpn(sm)
+    res = vpn.getAllVpn()
+    logging.debug(res)
+    print('-----------')
+    print(res)
 
 
 
 if __name__ == '__main__':
-
-    logging.config.fileConfig(fname='conf/logging.conf', disable_existing_loggers=False)
-    logger = logging.getLogger(__name__)
-
-    logger.debug('debug message')
-    logger.info('info message')
-    logger.warning('warn message')
-    logger.error('error message')
-    logger.critical('critical message')
-
-
-    # debug = True
-    # logging.basicConfig(format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
-    #                     datefmt='%Y-%m-%d:%H:%M:%S',
-    #                     level=logging.DEBUG,
-    #                     )
-    # logger = logging.getLogger(__name__)
-
     cli()
