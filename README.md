@@ -19,11 +19,11 @@ splus <command> <subcommand> <options and parameters>
 For now, the self executable isnt created so the prerequisite is to have python3 on your machine and invoke the commands using cli.py. 
 So in all examples below replace _splus_ with _python cli.py_
 
-``
-e.g. 
-python cli.py --help
-python cli.py create myvpn1
-python config --default-cpn http://localhost:8080 --broker-user admin --broker-password admin
+
+e.g.  
+python cli.py --help  
+python cli.py create myvpn1  
+python config --default-cpn http://localhost:8080 --broker-user admin --broker-password admin  
 
 ### Global Options
 --msgvpn  
