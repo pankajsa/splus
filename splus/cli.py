@@ -108,11 +108,7 @@ if __name__ == '__main__':
     logging.config.fileConfig(fname='conf/logging.conf', disable_existing_loggers=False)
     logger = logging.getLogger(__name__)
 
-    logger.debug('debug message')
-    logger.info('info message')
-    logger.warning('warn message')
-    logger.error('error message')
-    logger.critical('critical message')
+    logger.debug('SPLUS Started')
 
 
     # debug = True
