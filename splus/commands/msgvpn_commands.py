@@ -4,7 +4,7 @@ import click
 import os
 
 from SolaceMgr import SolaceMgr
-from Vpn import Vpn
+from managers import Vpn
 from common import *
 
 

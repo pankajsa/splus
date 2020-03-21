@@ -1,14 +1,10 @@
 import logging
 import requests
 import json
-from requests.auth import HTTPBasicAuth
 
 class Vpn:
-    '''This is SolaceMgr'''
-
     logger = logging.getLogger(__name__)
     def __init__(self, sm):
-        # self.logger.debug(f"SolaceMgr init {username} {password} {url}")
         self.sm = sm
         print('VPN Init')
         self.logger.info('VPN Init')
@@ -16,12 +12,9 @@ class Vpn:
 
     def getAllVpn(self):
         print('getAllVpn')
-        # res = requests.get(self.sm.url + f"msgVpns?where=msgVpnName=={name}&select=msgVpnName", auth=self.sm.auth)
         res = requests.get(self.sm.url + f"msgVpns", auth=self.sm.auth)
-        # print(res.content)
         # self.logger.debug(res.content)
         self.logger.debug(res.status_code)
-
 
     def getVpn(self, name):
         self.logger.debug(f"getVpn {name} {self.url} ")
@@ -29,8 +22,6 @@ class Vpn:
         res = requests.get(self.url + f"msgVpns/{name}", auth=self.auth)
         self.logger.debug(res.content)
         self.logger.debug(res.status_code)
-
-
 
     def createVpn(self, name, dict):
         try:
@@ -76,5 +67,3 @@ class Vpn:
         except Exception as ex:
             self.logger.error(f"msgvpn_create - END + {ex}")
 
-
-#

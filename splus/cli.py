@@ -6,7 +6,7 @@ import click
 import os
 
 from SolaceMgr import SolaceMgr
-from Vpn import Vpn
+
 from common import *
 from commands import *
 import configparser
@@ -92,8 +92,16 @@ def config(ctx, default_vpn, broker_url, broker_username, broker_password):
 
 cli.add_command(aclprofile)
 cli.add_command(msgvpn)
-
-
+cli.add_command(user)
+cli.add_command(clientprofile)
+cli.add_command(queue)
+cli.add_command(jndi)
+cli.add_command(rest)
+cli.add_command(alert)
+cli.add_command(broker)
+cli.add_command(ca)
+cli.add_command(mesh)
+cli.add_command(service)
 
 if __name__ == '__main__':
 
