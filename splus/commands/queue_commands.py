@@ -194,16 +194,36 @@ def update(ctx,
 
 
 @queue.command()
+@my_global_options
 @click.pass_context
-def show(ctx, **kwargs):
-    logging.debug(ctx.obj)
-    logging.debug('queue_create')
+@click.argument("qname")
+def show(ctx, qname, **kwargs):
+    try:
+        logging.debug(ctx.obj)
+        logging.debug('show')
+        sm = getSolaceMgr(ctx, kwargs)
+        queueMgr = QueueMgr(sm)
+        res = queueMgr.show(qname)
+        logger.debug("show")
+    except Exception as ex:
+        print('ERRROR')
+        logger.error(f"create - END + {ex}")
 
 @queue.command()
+@my_global_options
 @click.pass_context
-def remove(ctx, **kwargs):
-    logging.debug(ctx.obj)
-    logging.debug('queue_create')
+@click.argument("qname")
+def remove(ctx, qname, **kwargs):
+    try:
+        logging.debug(ctx.obj)
+        logging.debug('remove')
+        sm = getSolaceMgr(ctx, kwargs)
+        queueMgr = QueueMgr(sm)
+        res = queueMgr.delete(qname)
+        logger.debug("remove")
+    except Exception as ex:
+        print('ERRROR')
+        logger.error(f"create - END + {ex}")
 
 @queue.command()
 @click.pass_context
