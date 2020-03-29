@@ -2,7 +2,7 @@ import logging
 import click
 
 from common import *
-from managers import QueueMgr
+from managers import RestMgr
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +65,6 @@ def create(ctx, qname, exclusive, ack_propagation, dmq, egress, ingress, max_bin
            **kwargs):
     try:
         logging.debug(f'create {qname} {kwargs}')
-        sm = getSolaceMgr(ctx, kwargs)
 
         dict = {
             'queueName': qname,
@@ -88,9 +87,9 @@ def create(ctx, qname, exclusive, ack_propagation, dmq, egress, ingress, max_bin
             'respectMsgPriorityEnabled': respect_priority,
             'respectTtlEnabled': respect_ttl,
         }
-        queueMgr = QueueMgr(sm)
-        res = queueMgr.create(qname, dict)
-        logger.debug("create - END")
+        rest_mgr = RestMgr(kwargs)
+        rest_mgr.post('queues', dict)
+
     except Exception as ex:
         print('ERRROR')
         logger.error(f"create - END + {ex}")
@@ -143,9 +142,6 @@ def update(ctx,
            respect_priority, respect_ttl,
            **kwargs):
     try:
-        logging.debug(kwargs)
-        logging.debug(f'update ')
-
         dict = {}
 
         if exclusive is not None:
@@ -184,10 +180,9 @@ def update(ctx,
             dict['respectTtlEnabled'] = respect_ttl
 
         logging.debug(dict)
-        sm = getSolaceMgr(ctx, kwargs)
-        queueMgr = QueueMgr(sm)
-        res = queueMgr.update(qname, dict)
-        logger.debug("create - END")
+
+        rest_mgr = RestMgr(kwargs)
+        rest_mgr.patch('queues', qname, dict)
     except Exception as ex:
         print('ERRROR')
         logger.error(f"create - END + {ex}")
@@ -199,12 +194,8 @@ def update(ctx,
 @click.argument("qname")
 def show(ctx, qname, **kwargs):
     try:
-        logging.debug(ctx.obj)
-        logging.debug('show')
-        sm = getSolaceMgr(ctx, kwargs)
-        queueMgr = QueueMgr(sm)
-        res = queueMgr.show(qname)
-        logger.debug("show")
+        rest_mgr = RestMgr(kwargs)
+        rest_mgr.get('queues', qname)
     except Exception as ex:
         print('ERRROR')
         logger.error(f"create - END + {ex}")
@@ -215,12 +206,9 @@ def show(ctx, qname, **kwargs):
 @click.argument("qname")
 def remove(ctx, qname, **kwargs):
     try:
-        logging.debug(ctx.obj)
-        logging.debug('remove')
-        sm = getSolaceMgr(ctx, kwargs)
-        queueMgr = QueueMgr(sm)
-        res = queueMgr.delete(qname)
-        logger.debug("remove")
+        logger.debug(f"remove {qname}")
+        rest_mgr = RestMgr(kwargs)
+        rest_mgr.delete('queues', qname)
     except Exception as ex:
         print('ERRROR')
         logger.error(f"create - END + {ex}")

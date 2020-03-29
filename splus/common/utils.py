@@ -5,8 +5,7 @@ import os
 
 from requests.auth import HTTPBasicAuth
 
-from SolaceMgr import SolaceMgr
-
+from managers import SolaceMgr
 
 logger = logging.getLogger(__name__)
 

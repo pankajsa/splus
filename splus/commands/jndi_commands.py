@@ -2,7 +2,7 @@ import logging
 import click
 
 from common import *
-from managers import JndiMgr
+from managers import RestMgr
 
 logger = logging.getLogger(__name__)
 
@@ -105,14 +105,6 @@ def cf_create(ctx, name, enable_dup_clientid, client_description, client_id, ena
     try:
         logging.debug(f'cf_create {name} {kwargs}')
 
-        # rm = RestMgr(kwargs)
-        # rm.post(suburl, data)
-        # rm.get(suburl)
-        # rm.delete(suburl)
-        # rm.patch(suburl)
-
-
-        sm = getSolaceMgr(ctx, kwargs)
         dict = {
             'allowDuplicateClientIdEnabled': enable_dup_clientid,
             'clientDescription': client_description,
@@ -151,8 +143,9 @@ def cf_create(ctx, name, enable_dup_clientid, client_description, client_id, ena
             'transportTcpNoDelayEnabled': tcp_no_delay,
             'xaEnabled': xa,
         }
-        jndiMgr = JndiMgr(sm)
-        res = jndiMgr.create(dict)
+        rest_mgr = RestMgr(kwargs)
+        rest_mgr.post('jndiConnectionFactories', dict)
+
         logger.debug("create - END")
     except Exception as ex:
         logger.error(f"cf_create - END + {ex}")
@@ -286,9 +279,9 @@ def cf_update(ctx, name, enable_dup_clientid, client_description, client_id, ena
         if tcp_no_delay is not None: dict['transportTcpNoDelayEnabled'] = tcp_no_delay
         if xa is not None: dict['xaEnabled'] = xa
 
-        sm = getSolaceMgr(ctx, kwargs)
-        jndiMgr = JndiMgr(sm)
-        res = jndiMgr.update(name, dict)
+        rest_mgr = RestMgr(kwargs)
+        rest_mgr.patch('jndiConnectionFactories', name, dict)
+
     except Exception as ex:
         logger.error(f"END + {ex}")
 
@@ -300,10 +293,8 @@ def cf_update(ctx, name, enable_dup_clientid, client_description, client_id, ena
 def cf_show(ctx, name, **kwargs):
     try:
         logging.debug(ctx.obj)
-        logging.debug('show')
-        sm = getSolaceMgr(ctx, kwargs)
-        jndiMgr = JndiMgr(sm)
-        res = jndiMgr.show(name)
+        rest_mgr = RestMgr(kwargs)
+        res = rest_mgr.get('jndiConnectionFactories', name)
         logger.debug(res)
     except Exception as ex:
         logger.error(f"Exception: {ex}")
@@ -312,14 +303,11 @@ def cf_show(ctx, name, **kwargs):
 @my_global_options
 @click.pass_context
 @click.argument("name")
-def remove(ctx, qname, **kwargs):
+def remove(ctx, name, **kwargs):
     try:
-        logging.debug(ctx.obj)
-        logging.debug('remove')
-        sm = getSolaceMgr(ctx, kwargs)
-        queueMgr = QueueMgr(sm)
-        res = queueMgr.delete(qname)
-        logger.debug("remove")
+        logger.debug(f"remove {name}")
+        rest_mgr = RestMgr(kwargs)
+        rest_mgr.delete('jndiConnectionFactories', name)
     except Exception as ex:
         print('ERRROR')
         logger.error(f"create - END + {ex}")

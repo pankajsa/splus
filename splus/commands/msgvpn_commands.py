@@ -2,8 +2,8 @@
 import logging
 import click
 
-from managers import Vpn
 from common import *
+from managers import RestMgr
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 @click.group()
 def msgvpn(**kwargs):
     pass
+
 
 
 @msgvpn.command(name='create')
@@ -21,42 +22,42 @@ def msgvpn(**kwargs):
 @click.argument("vpnname")
 @click.pass_context
 def msgvpn_create(ctx, vpnname, **kwargs):
-    try:
-        logger.debug(f"msgvpn_create - START {vpnname}")
-        sm = getSolaceMgr(ctx, kwargs)
+        logger.debug(f"msgvpn_create {vpnname}")
         dict = {
+            "msgVpnName": f"{vpnname}",
             "authenticationBasicEnabled": True if 'basicauth' in kwargs else False,
             "dmrEnabled": kwargs['dmr'],
             "enabled": kwargs['enable'],
         }
-        vpn = Vpn(sm)
-        res = vpn.createVpn(vpnname, dict)
-        logger.debug("msgvpn_create - END")
-    except Exception as ex:
-        print('ERRROR')
-        logger.error(f"msgvpn_create - END + {ex}")
+        rest_mgr = RestMgr(kwargs)
+        rest_mgr.post('msgVpns', dict, False)
 
 
 @msgvpn.command(name='delete')
 @click.argument("vpnname")
-# @my_global_options
+@my_global_options
 @click.pass_context
 def msgvpn_delete(ctx, vpnname, **kwargs):
-    GetDefaults(ctx, kwargs)
-    vpn = Vpn(sm)
-    res = vpn.deleteVpn(vpnname)
-    logger.debug(res)
-    print('-----------')
+    logger.debug(f"msgvpn_delete {vpnname}")
+    rest_mgr = RestMgr(kwargs)
+    rest_mgr.delete('msgVpns', vpnname, False)
+
 
 @msgvpn.command(name='list')
 @my_global_options
 @click.pass_context
 def msgvpn_list(ctx, **kwargs):
-    print('msgvpn_list')
+    logger.debug(f"msgvpn_list")
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.get('msgVpns?select=msgVpnName', None, False)
 
-    GetDefaults(ctx, kwargs)
-    vpn = Vpn(sm)
-    res = vpn.getAllVpn()
-    logger.debug(res)
-    print('-----------')
+
+@msgvpn.command(name='get')
+@my_global_options
+@click.pass_context
+@click.argument("vpnname")
+def msgvpn_get(ctx, vpnname, **kwargs):
+    logger.debug(f"msgvpn_list")
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.get('msgVpns', vpnname, False)
 

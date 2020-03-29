@@ -5,10 +5,10 @@ import logging.config
 import click
 import os
 
-from common import *
 from commands import *
 
 
+logger = logging.getLogger(__name__)
 
 
 @click.group()
@@ -20,7 +20,7 @@ def cli(ctx, debug):
 
 
 @cli.command()
-@click.option('--default-vpn')
+@click.option('--default-vpn', default='default', show_default=True)
 @click.option('--broker-url', default="http://localhost:8080", show_default=True, )
 @click.option('--broker-username', required=True)
 @click.option('--broker-password', required=True)
