@@ -104,6 +104,14 @@ def cf_create(ctx, name, enable_dup_clientid, client_description, client_id, ena
             **kwargs):
     try:
         logging.debug(f'cf_create {name} {kwargs}')
+
+        # rm = RestMgr(kwargs)
+        # rm.post(suburl, data)
+        # rm.get(suburl)
+        # rm.delete(suburl)
+        # rm.patch(suburl)
+
+
         sm = getSolaceMgr(ctx, kwargs)
         dict = {
             'allowDuplicateClientIdEnabled': enable_dup_clientid,
@@ -278,18 +286,43 @@ def cf_update(ctx, name, enable_dup_clientid, client_description, client_id, ena
         if tcp_no_delay is not None: dict['transportTcpNoDelayEnabled'] = tcp_no_delay
         if xa is not None: dict['xaEnabled'] = xa
 
-        logger.debug(dict)
+        sm = getSolaceMgr(ctx, kwargs)
+        jndiMgr = JndiMgr(sm)
+        res = jndiMgr.update(name, dict)
     except Exception as ex:
-        logger.error(f"cf_create - END + {ex}")
+        logger.error(f"END + {ex}")
 
 
 @cf.command(name='show')
-def cf_show():
-    pass
+@my_global_options
+@click.pass_context
+@click.argument("name")
+def cf_show(ctx, name, **kwargs):
+    try:
+        logging.debug(ctx.obj)
+        logging.debug('show')
+        sm = getSolaceMgr(ctx, kwargs)
+        jndiMgr = JndiMgr(sm)
+        res = jndiMgr.show(name)
+        logger.debug(res)
+    except Exception as ex:
+        logger.error(f"Exception: {ex}")
 
 @cf.command(name='remove')
-def cf_remove():
-    pass
+@my_global_options
+@click.pass_context
+@click.argument("name")
+def remove(ctx, qname, **kwargs):
+    try:
+        logging.debug(ctx.obj)
+        logging.debug('remove')
+        sm = getSolaceMgr(ctx, kwargs)
+        queueMgr = QueueMgr(sm)
+        res = queueMgr.delete(qname)
+        logger.debug("remove")
+    except Exception as ex:
+        print('ERRROR')
+        logger.error(f"create - END + {ex}")
 
 @cf.command(name='list')
 def cf_list():

@@ -32,7 +32,7 @@ class JndiMgr:
         try:
             data =json.dumps(dict)
             self.logger.debug(data)
-            res = requests.patch(self.sm.url + f"msgVpns/{self.sm.msgvpn}/queues/{name}",
+            res = requests.patch(self.sm.url + f"msgVpns/{self.sm.msgvpn}/jndiConnectionFactories/{name}",
                                 data=data,
                                 headers=self.sm.requestHeaders(),
                                 auth=self.sm.auth)
@@ -52,7 +52,7 @@ class JndiMgr:
     def delete(self, name):
         try:
             self.logger.debug(f"delete {name} {self.sm.url} ")
-            res = requests.delete(self.sm.url + f"msgVpns/{self.sm.msgvpn}/queues/{name}",
+            res = requests.delete(self.sm.url + f"msgVpns/{self.sm.msgvpn}/jndiConnectionFactories/{name}",
                                 headers=self.sm.requestHeaders(),
                                 auth=self.sm.auth)
             self.logger.debug(res.content)
@@ -69,7 +69,7 @@ class JndiMgr:
     def show(self, name):
         try:
             self.logger.debug(f"show {name} {self.sm.url} ")
-            res = requests.get(self.sm.url + f"msgVpns/{self.sm.msgvpn}/queues/{name}",
+            res = requests.get(self.sm.url + f"msgVpns/{self.sm.msgvpn}/jndiConnectionFactories/{name}",
                                   headers=self.sm.requestHeaders(),
                                   auth=self.sm.auth)
             self.logger.debug(res.content)
