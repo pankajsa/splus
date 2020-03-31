@@ -1,6 +1,5 @@
 "./__constants.o"
 "./__constants_data.o"
-"./__frozen.o"
 "./__helpers.o"
 "./module.__main__.o"
 "./static_src/MainProgram.o"
