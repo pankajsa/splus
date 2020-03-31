@@ -6,6 +6,7 @@ from .clientuser_commands import clientuser
 from .queue_commands import queue
 from .jndi_commands import jndi
 from .rest_commands import rest
+from .replay_commands import replay
 from .alert_commands import alert
 from .broker_commands import broker
 from .ca_commands import ca

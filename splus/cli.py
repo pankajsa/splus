@@ -7,7 +7,6 @@ import os
 
 from commands import *
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -51,6 +50,8 @@ cli.add_command(clientprofile)
 cli.add_command(clientuser)
 cli.add_command(queue)
 cli.add_command(jndi)
+cli.add_command(replay)
+
 # cli.add_command(rest)
 # cli.add_command(alert)
 # cli.add_command(broker)
