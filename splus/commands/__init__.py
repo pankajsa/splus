@@ -2,6 +2,7 @@ from .aclprofile_commands import aclprofile
 from .msgvpn_commands import msgvpn
 from .user_commands import user
 from .clientprofile_commands import clientprofile
+from .clientuser_commands import clientuser
 from .queue_commands import queue
 from .jndi_commands import jndi
 from .rest_commands import rest
