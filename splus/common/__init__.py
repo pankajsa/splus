@@ -1,1 +1,1 @@
-from .utils import my_global_options, getSolaceMgr
+from .utils import my_global_options, add_if

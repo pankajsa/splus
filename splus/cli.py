@@ -1,4 +1,4 @@
-#!/usr/bin/python
+## /usr/local/bin/python3 -m nuitka --follow-imports cli.py
 import logging
 import logging.config
 
@@ -44,10 +44,10 @@ def config(ctx, default_vpn, broker_url, broker_username, broker_password):
     # logger.debug(ctx.obj)
 
 
-# cli.add_command(aclprofile)
+cli.add_command(aclprofile)
 cli.add_command(msgvpn)
 # cli.add_command(user)
-# cli.add_command(clientprofile)
+cli.add_command(clientprofile)
 cli.add_command(queue)
 cli.add_command(jndi)
 # cli.add_command(rest)

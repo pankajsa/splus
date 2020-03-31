@@ -13,20 +13,24 @@ def msgvpn(**kwargs):
     pass
 
 
+@click.option('--exclusive/--no-exclusive', default=False, show_default=True,
+              help='Access type for delivering messages')
+
 
 @msgvpn.command(name='create')
 @my_global_options
-@click.option('--basicauth', is_flag=True, default=False)
+@click.option('--basic-auth/--no-basic-auth', default=True, show_default=True,
+            help='Basic authentication that involves the use of a username and password to prove identity ')
 @click.option('--dmr/--no-dmr', default=False, show_default=True)
 @click.option('--enable/--disable', default=False, show_default=True)
 @click.argument("vpnname")
 @click.pass_context
-def msgvpn_create(ctx, vpnname, **kwargs):
+def msgvpn_create(ctx, vpnname, basic_auth, dmr, **kwargs):
         logger.debug(f"msgvpn_create {vpnname}")
         dict = {
             "msgVpnName": f"{vpnname}",
-            "authenticationBasicEnabled": True if 'basicauth' in kwargs else False,
-            "dmrEnabled": kwargs['dmr'],
+            "authenticationBasicEnabled": True if basic_auth else False,
+            "dmrEnabled": dmr,
             "enabled": kwargs['enable'],
         }
         rest_mgr = RestMgr(kwargs)

@@ -291,13 +291,13 @@ def cf_update(ctx, name, enable_dup_clientid, client_description, client_id, ena
 @click.pass_context
 @click.argument("name")
 def cf_show(ctx, name, **kwargs):
-    try:
+    # try:
         logging.debug(ctx.obj)
         rest_mgr = RestMgr(kwargs)
         res = rest_mgr.get('jndiConnectionFactories', name)
         logger.debug(res)
-    except Exception as ex:
-        logger.error(f"Exception: {ex}")
+    # except Exception as ex:
+    #     logger.error(f"Exception: {ex}")
 
 @cf.command(name='remove')
 @my_global_options

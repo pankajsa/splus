@@ -1,7 +1,10 @@
 import logging
 import click
 
-# from cli import my_global_options
+from common import *
+from managers import RestMgr
+
+logger = logging.getLogger(__name__)
 
 
 @click.group()

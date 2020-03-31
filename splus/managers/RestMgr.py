@@ -17,7 +17,7 @@ class RestMgr:
         default_vpn = broker_url = broker_username = broker_password = None
         try:
             config = configparser.ConfigParser()
-            # logging.debug(obj)
+            logging.debug(kwargs)
             config.read(os.path.expanduser('~/.splus.cfg'))
             default_vpn = config['GLOBAL'].get('default-vpn', '')
             broker_url = config['GLOBAL'].get('broker-url', '')
@@ -27,7 +27,7 @@ class RestMgr:
             logger.warning(f'Cannot load defaults from ~/.splus.cfg:  {err}')
         finally:
             if kwargs['default_vpn'] != None:
-                default_vpn = kwargs['default-vpn']
+                default_vpn = kwargs['default_vpn']
             if kwargs['broker_url'] != None:
                 broker_url = kwargs['broker_url']
             if kwargs['broker_username'] != None:

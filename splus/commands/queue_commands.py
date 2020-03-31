@@ -210,8 +210,7 @@ def remove(ctx, qname, **kwargs):
         rest_mgr = RestMgr(kwargs)
         rest_mgr.delete('queues', qname)
     except Exception as ex:
-        print('ERRROR')
-        logger.error(f"create - END + {ex}")
+        logger.error(f"{ex}")
 
 @queue.command()
 @click.pass_context
