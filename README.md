@@ -32,6 +32,16 @@ python config --default-cpn http://localhost:8080 --broker-user admin --broker-p
 --broker-password  
 --output=text|json  
 
+### @ToDo
+This project is under construction, and the below capabilities are still not done
+- TLS Setup
+- DMR Cluster
+- OAuth
+- LDAP Authorization Group
+- Bridge
+- Topic Endpoint
+- Replicated Topics
+
 ### Configuration
 config  --default-vpn <name> --broker-url <url> --broker-user <username> --broker-password <password> --output=(json|text)
 

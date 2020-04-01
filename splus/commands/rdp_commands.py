@@ -15,6 +15,7 @@ def rdp():
 
 
 rdp.add_command(rdp_queue)
+rdp.add_command(rdp_rc)
 
 
 
