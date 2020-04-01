@@ -5,7 +5,8 @@ from .clientprofile_commands import clientprofile
 from .clientuser_commands import clientuser
 from .queue_commands import queue
 from .jndi_commands import jndi
-from .rest_commands import rest
+from .rdp_queue_commands import rdp_queue
+from .rdp_commands import rdp
 from .replay_commands import replay
 from .alert_commands import alert
 from .broker_commands import broker
