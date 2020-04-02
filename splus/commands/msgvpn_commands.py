@@ -230,7 +230,7 @@ def create(name,
            msgbus, msgbus_show, amqp_max_conn, amqp_plaintext, amqp_port,
            amqp_tls, amqp_tls_port, mqtt_max_conn, mqtt_plaintext, mqtt_port, mqtt_tls, mqtt_tls_port,
            mqtt_wss, mqtt_wss_port, mqtt_ws, mqtt_ws_port, rest_max_conn,
-           rest_plaintext, rest_port, rest_tls, rest_tls_port, rest__gateway_mode,
+           rest_plaintext, rest_port, rest_tls, rest_tls_port, rest_gateway_mode,
            rest_max_outgoing_conn, smf_max_conn, smf_plaintext, smf_tls, web_max_conn,
            web_plaintext, web_tls, tls_downgrade,
         **kwargs):
@@ -252,7 +252,7 @@ def create(name,
            msgbus, msgbus_show, amqp_max_conn, amqp_plaintext, amqp_port,
            amqp_tls, amqp_tls_port, mqtt_max_conn, mqtt_plaintext, mqtt_port, mqtt_tls, mqtt_tls_port,
            mqtt_wss, mqtt_wss_port, mqtt_ws, mqtt_ws_port, rest_max_conn,
-           rest_plaintext, rest_port, rest_tls, rest_tls_port, rest__gateway_mode,
+           rest_plaintext, rest_port, rest_tls, rest_tls_port, rest_gateway_mode,
            rest_max_outgoing_conn, smf_max_conn, smf_plaintext, smf_tls, web_max_conn,
            web_plaintext, web_tls, tls_downgrade,
            **kwargs)
@@ -276,7 +276,7 @@ def upsert(is_post, name,
  msgbus, msgbus_show, amqp_max_conn, amqp_plaintext, amqp_port,
  amqp_tls, amqp_tls_port, mqtt_max_conn, mqtt_plaintext, mqtt_port, mqtt_tls, mqtt_tls_port,
  mqtt_wss, mqtt_wss_port, mqtt_ws, mqtt_ws_port, rest_max_conn,
- rest_plaintext, rest_port, rest_tls, rest_tls_port, rest__gateway_mode,
+ rest_plaintext, rest_port, rest_tls, rest_tls_port, rest_gateway_mode,
  rest_max_outgoing_conn, smf_max_conn, smf_plaintext, smf_tls, web_max_conn,
  web_plaintext, web_tls, tls_downgrade,
            **kwargs):
@@ -379,7 +379,7 @@ def upsert(is_post, name,
         add_if(dict, rest_port, 'serviceRestIncomingPlainTextListenPort', rest_port, 0)
         add_if(dict, rest_tls, 'serviceRestIncomingTlsEnabled')
         add_if(dict, rest_tls_port, 'serviceRestIncomingTlsListenPort', rest_tls_port, 0)
-        add_if(dict, rest__gateway_mode, 'serviceRestMode', 'gateway', 'messaging')
+        add_if(dict, rest_gateway_mode, 'serviceRestMode', 'gateway', 'messaging')
         add_if(dict, rest_max_outgoing_conn, 'serviceRestOutgoingMaxConnectionCount', rest_max_outgoing_conn, 0)
         add_if(dict, smf_max_conn, 'serviceSmfMaxConnectionCount', smf_max_conn, 0)
         add_if(dict, smf_plaintext, 'serviceSmfPlainTextEnabled')
@@ -570,7 +570,7 @@ def upsert(is_post, name,
               help='Enable or disable the use of encryption (TLS) for the REST service')
 @click.option('--rest-tls-port', type=int,
               help='Port number for REST clients that connect over TLS. Port must be unique across the message backbone')
-@click.option('--rest-gateway-mode/--no-rest--gateway-mode', 
+@click.option('--rest-gateway-mode/--no-rest-gateway-mode',
               help='Enable gateway mode or let the message VPN function in the default messaging mode')
 @click.option('--rest-max-outgoing-conn', type=int,
               help='Maximum number of REST Consumer (outgoing) client connections')
@@ -593,7 +593,7 @@ def update(name,
            alias, basic_authn, basic_authn_profile, basic_radius_domain, basic_authn_type,
            enable_cert_api_username, enable_cert_authn, max_chain_depth, cert_revoke_check, is_cert_user_source_cn,
            cert_date_check, enable_kerberos_api_username, enable_kereberos_authn, default_oauth_provider, enable_oauth,
-           ldap_attribute_name, enable_trim_ldap_domain, ldap_authz_profile, authz_type,
+           ldap_attribute_name, trim_ldap_domain, ldap_authz_profile, authz_type,
            enable_bridge_cn_check, max_chain_depth_bridge, cert_date_check_bridge, enable_cache_mgmt,
            dmr, enable, event_log_tag, publish_client_events, publish_vpn_event,
            event_subscription_mode, enable_mqtt_topics, enable_smf_topics, export_subscriptions, jndi,
@@ -607,15 +607,15 @@ def update(name,
            msgbus, msgbus_show, amqp_max_conn, amqp_plaintext, amqp_port,
            amqp_tls, amqp_tls_port, mqtt_max_conn, mqtt_plaintext, mqtt_port, mqtt_tls, mqtt_tls_port,
            mqtt_wss, mqtt_wss_port, mqtt_ws, mqtt_ws_port, rest_max_conn,
-           rest_plaintext, rest_port, rest_tls, rest_tls_port, rest__gateway_mode,
+           rest_plaintext, rest_port, rest_tls, rest_tls_port, rest_gateway_mode,
            rest_max_outgoing_conn, smf_max_conn, smf_plaintext, smf_tls, web_max_conn,
            web_plaintext, web_tls, tls_downgrade,
            **kwargs):
     upsert(False, name,
            alias, basic_authn, basic_authn_profile, basic_radius_domain, basic_authn_type,
-           enable_cert_api_username, enable_cert_authn, max_chain_depth, cert_revoke_check, cert_user_source,
+           enable_cert_api_username, enable_cert_authn, max_chain_depth, cert_revoke_check, is_cert_user_source_cn,
            cert_date_check, enable_kerberos_api_username, enable_kereberos_authn, default_oauth_provider, enable_oauth,
-           ldap_attribute_name, enable_trim_ldap_domain, ldap_authz_profile, authz_type,
+           ldap_attribute_name, trim_ldap_domain, ldap_authz_profile, authz_type,
            enable_bridge_cn_check, max_chain_depth_bridge, cert_date_check_bridge, enable_cache_mgmt,
            dmr, enable, event_log_tag, publish_client_events, publish_vpn_event,
            event_subscription_mode, enable_mqtt_topics, enable_smf_topics, export_subscriptions, jndi,
@@ -629,7 +629,7 @@ def update(name,
            msgbus, msgbus_show, amqp_max_conn, amqp_plaintext, amqp_port,
            amqp_tls, amqp_tls_port, mqtt_max_conn, mqtt_plaintext, mqtt_port, mqtt_tls, mqtt_tls_port,
            mqtt_wss, mqtt_wss_port, mqtt_ws, mqtt_ws_port, rest_max_conn,
-           rest_plaintext, rest_port, rest_tls, rest_tls_port, rest__gateway_mode,
+           rest_plaintext, rest_port, rest_tls, rest_tls_port, rest_gateway_mode,
            rest_max_outgoing_conn, smf_max_conn, smf_plaintext, smf_tls, web_max_conn,
            web_plaintext, web_tls, tls_downgrade,
            **kwargs)
