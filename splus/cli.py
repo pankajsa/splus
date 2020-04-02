@@ -39,19 +39,16 @@ def config(ctx, default_vpn, broker_url, broker_username, broker_password):
         cfg.write(f"broker-username={broker_username}\n")
         cfg.write(f"broker-password={broker_password}\n")
 
-    # logger.debug("CONTEXT")
-    # logger.debug(ctx.obj)
 
-
-cli.add_command(aclprofile)
 cli.add_command(msgvpn)
-# cli.add_command(user)
+cli.add_command(aclprofile)
 cli.add_command(clientprofile)
 cli.add_command(clientuser)
 cli.add_command(queue)
 cli.add_command(jndi)
 cli.add_command(replay)
 cli.add_command(rdp)
+# cli.add_command(user)
 # cli.add_command(alert)
 # cli.add_command(broker)
 # cli.add_command(ca)
@@ -59,8 +56,15 @@ cli.add_command(rdp)
 # cli.add_command(service)
 
 if __name__ == '__main__':
-    logging.config.fileConfig(fname='conf/logging.conf', disable_existing_loggers=False)
-    logger = logging.getLogger(__name__)
-    logger.debug('SPLUS Started')
-
-    cli()
+    try:
+        logging.config.fileConfig(fname='conf/logging.conf', disable_existing_loggers=False)
+        logger = logging.getLogger(__name__)
+        logger.debug('SPLUS Started')
+    except Exception as ex:
+        print('oops exception')
+        print(ex)
+        logging.basicConfig(format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.DEBUG)
+        logger = logging.getLogger(__name__)
+        logger.debug('SPLUS Started')
+    print('normal')
+    # cli()
