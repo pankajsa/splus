@@ -1,6 +1,6 @@
-# splus
+# splus - Solace PubSub+ SDK
 ## Overview
-Solace PubSub SDK is a SDK CLI kit which allows management of Solace PubSub+ Brokers.
+Solace PubSub+ SDK is a SDK CLI kit which allows management of Solace PubSub+ Brokers.
 Along with the CLI available within the broker, SEMP APIs, Web Admin and SolAdmin
 this is one more way of administrating the broker.
 
