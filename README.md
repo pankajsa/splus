@@ -17,13 +17,13 @@ While there are already so many ways of managing the broker, the motivation for 
 splus <command> <subcommand> <options and parameters>
 
 For now, the self executable isnt created so the prerequisite is to have python3 on your machine and invoke the commands using cli.py. 
-So in all examples below replace _splus_ with _python cli.py_
+So in all examples below replace _splus_ with _python splus.py_
 
 
 e.g.  
-python cli.py --help  
-python cli.py create myvpn1  
-python config --default-cpn http://localhost:8080 --broker-user admin --broker-password admin  
+python splus.py --help  
+python splus.py create myvpn1  
+python splus.py config --default-cpn http://localhost:8080 --broker-user admin --broker-password admin  
 
 ### Global Options
 --msgvpn  

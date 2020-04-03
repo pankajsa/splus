@@ -11,6 +11,7 @@ suburl = 'msgVpns'
 
 @click.group()
 def msgvpn(**kwargs):
+    '''Manage the Message VPNs'''
     pass
 
 
@@ -71,7 +72,7 @@ def msgvpn(**kwargs):
               help='Control managing of cache instances over the message bus')
 @click.option('--dmr/--no-dmr', default=True, show_default=True,
               help='Enable or disable Dynamic Message Routing (DMR)')
-@click.option('--enable/--no-enable', default=False, show_default=True,
+@click.option('--enable/--no-enable', default=True, show_default=True,
               help='Enable or disable the Message VPN')
 @click.option('--event-log-tag', help='A prefix applied to all published Events in the Message VPN')
 @click.option('--publish-client-events/--no-publish-client-events',
@@ -234,6 +235,7 @@ def create(name,
            rest_max_outgoing_conn, smf_max_conn, smf_plaintext, smf_tls, web_max_conn,
            web_plaintext, web_tls, tls_downgrade,
         **kwargs):
+    '''Create a new Message VPN'''
     upsert(True, name,
            alias, basic_authn, basic_authn_profile, basic_radius_domain, basic_authn_type,
            enable_cert_api_username, enable_cert_authn, max_chain_depth, cert_revoke_check, is_cert_user_source_cn,
@@ -611,6 +613,7 @@ def update(name,
            rest_max_outgoing_conn, smf_max_conn, smf_plaintext, smf_tls, web_max_conn,
            web_plaintext, web_tls, tls_downgrade,
            **kwargs):
+    '''Update an existing Message VPN'''
     upsert(False, name,
            alias, basic_authn, basic_authn_profile, basic_radius_domain, basic_authn_type,
            enable_cert_api_username, enable_cert_authn, max_chain_depth, cert_revoke_check, is_cert_user_source_cn,
@@ -641,6 +644,7 @@ def update(name,
 @click.argument("vpnname")
 @my_global_options
 def remove(vpnname, **kwargs):
+    '''Remove an existing Message VPN'''
     rest_mgr = RestMgr(kwargs)
     rest_mgr.delete(suburl, vpnname, False)
 
@@ -648,6 +652,7 @@ def remove(vpnname, **kwargs):
 @msgvpn.command()
 @my_global_options
 def list(**kwargs):
+    '''List all the Message VPNs on Solace PubSub+ Broker'''
     rest_mgr = RestMgr(kwargs)
     res = rest_mgr.get(f'{suburl}?select=msgVpnName', None, False)
 
@@ -656,5 +661,6 @@ def list(**kwargs):
 @my_global_options
 @click.argument("vpnname")
 def show(vpnname, **kwargs):
+    '''Show details of an existing Message VPN'''
     rest_mgr = RestMgr(kwargs)
     res = rest_mgr.get(suburl, vpnname, False)
