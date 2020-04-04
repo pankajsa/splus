@@ -44,6 +44,8 @@ class RestMgr:
                 self.baseurl = broker_url + '/SEMP/v2/config/'
                 self.default_vpn = default_vpn
                 self.auth = HTTPBasicAuth(broker_username, broker_password)
+            else:
+                exit(2)
 
 
     def post(self, suburl, dict, default_vpn = True):
@@ -97,7 +99,7 @@ class RestMgr:
     def get(self, suburl, name = None, default_vpn = True):
         try:
 
-            self.logger.info(f"delete {self.baseurl}{suburl}")
+            # self.logger.info(f"delete {self.baseurl}{suburl}")
             if default_vpn:
                 new_baseurl = f'{self.baseurl}msgVpns/{self.default_vpn}/'
             else:
@@ -121,7 +123,7 @@ class RestMgr:
 
     def patch(self, suburl, name, dict, default_vpn = True):
         try:
-            self.logger.info(f"post {self.baseurl}  {suburl} {dict}")
+            # self.logger.info(f"post {self.baseurl}  {suburl} {dict}")
             data = json.dumps(dict)
             if default_vpn:
                 new_baseurl = f'{self.baseurl}msgVpns/{self.default_vpn}/'

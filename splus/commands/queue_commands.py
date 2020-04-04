@@ -5,6 +5,7 @@ from common import *
 from managers import RestMgr
 
 logger = logging.getLogger(__name__)
+suburl = 'queues'
 
 perm_map ={
     'no': 'no-access',
@@ -17,12 +18,11 @@ perm_map ={
 
 @click.group()
 def queue():
+    '''Manage the queues in the Message VPN, which is configured as the default'''
     pass
 
 
 @queue.command()
-@my_global_options
-@click.pass_context
 @click.argument("qname")
 @click.option('--exclusive/--no-exclusive', default=False, show_default=True,
               help='Access type for delivering messages')
@@ -59,46 +59,62 @@ def queue():
               help='When enabled, messages contained in the Queue are delivered in priority order, from 9 (highest) to 0 (lowest). MQTT queues do not support enabling message priority')
 @click.option('--respect-ttl/--no-respect-ttl', default=True, show_default=True,
               help='Respect the time-to-live (TTL) for messages and expired messages are discarded or moved to the DMQ')
-def create(ctx, qname, exclusive, ack_propagation, dmq, egress, ingress, max_bind, max_unacked, max_msg_size, max_spool,
+@my_global_options
+def create(qname, exclusive, ack_propagation, dmq, egress, ingress, max_bind, max_unacked, max_msg_size, max_spool,
            max_redelivery, ttl, owner, perm, low_priority, low_priority_msg_limit, reject_on_discard,
            respect_priority, respect_ttl,
            **kwargs):
-    try:
-        logging.debug(f'create {qname} {kwargs}')
+    '''Create a new queue'''
+    upsert(True, qname,
+           exclusive, ack_propagation, dmq, egress, ingress, max_bind, max_unacked, max_msg_size, max_spool,
+           max_redelivery, ttl, owner, perm, low_priority, low_priority_msg_limit, reject_on_discard,
+           respect_priority, respect_ttl,
+           **kwargs)
 
-        dict = {
-            'queueName': qname,
-            'accessType': 'exclusive' if exclusive else 'non-exclusive',
-            'consumerAckPropagationEnabled': ack_propagation,
-            'deadMsgQueue': dmq,
-            'egressEnabled': egress,
-            'ingressEnabled': ingress,
-            'maxBindCount': max_bind,
-            'maxDeliveredUnackedMsgsPerFlow': max_unacked,
-            'maxMsgSize': max_msg_size,
-            'maxMsgSpoolUsage': max_spool,
-            'maxRedeliveryCount': max_redelivery,
-            'maxTtl': ttl,
-            'owner': owner,
-            'permission': perm_map[perm],
-            'rejectLowPriorityMsgEnabled': low_priority,
-            'rejectLowPriorityMsgLimit': low_priority_msg_limit,
-            'rejectMsgToSenderOnDiscardBehavior': reject_on_discard,
-            'respectMsgPriorityEnabled': respect_priority,
-            'respectTtlEnabled': respect_ttl,
-        }
+
+
+def upsert(is_post, qname,
+           exclusive, ack_propagation, dmq, egress, ingress, max_bind, max_unacked, max_msg_size, max_spool,
+           max_redelivery, ttl, owner, perm, low_priority, low_priority_msg_limit, reject_on_discard,
+           respect_priority, respect_ttl,
+           **kwargs):
+    # try:
+        dict = {}
+
+        add_if(dict, qname, 'queueName', qname)
+        add_if(dict, exclusive, 'accessType', 'exclusive', 'non-exclusive')
+        add_if(dict, ack_propagation, 'consumerAckPropagationEnabled', ack_propagation)
+        add_if(dict, dmq, 'deadMsgQueue', dmq)
+        add_if(dict, egress, 'egressEnabled', egress)
+        add_if(dict, ingress, 'ingressEnabled', ingress)
+        add_if(dict, max_bind, 'maxBindCount', max_bind, 0)
+        add_if(dict, max_unacked, 'maxDeliveredUnackedMsgsPerFlow', max_unacked, 0)
+        add_if(dict, max_msg_size, 'maxMsgSize', max_msg_size, 0)
+        add_if(dict, max_spool, 'maxMsgSpoolUsage', max_spool, 0)
+        add_if(dict, max_redelivery, 'maxRedeliveryCount', max_redelivery, 0)
+        add_if(dict, ttl, 'maxTtl', ttl, 0)
+        add_if(dict, owner, 'owner', owner, '')
+        add_if(dict, perm, 'permission', perm_map[perm] if perm else '', '')
+        add_if(dict, low_priority, 'rejectLowPriorityMsgEnabled', low_priority)
+        add_if(dict, low_priority_msg_limit, 'rejectLowPriorityMsgLimit', low_priority_msg_limit, 0)
+        add_if(dict, reject_on_discard, 'rejectMsgToSenderOnDiscardBehavior', reject_on_discard)
+        add_if(dict, respect_priority, 'respectMsgPriorityEnabled', respect_priority)
+        add_if(dict, respect_ttl, 'respectTtlEnabled', respect_ttl)
+
+        # logging.debug(dict)
+
         rest_mgr = RestMgr(kwargs)
-        rest_mgr.post('queues', dict)
-
-    except Exception as ex:
-        print('ERRROR')
-        logger.error(f"create - END + {ex}")
+        if is_post:
+            res = rest_mgr.post(suburl, dict)
+        else:
+            res = rest_mgr.patch(suburl, qname, dict)
+        send_response(res)
+    # except Exception as ex:
+    #     logger.error(f"upsert Exception: {ex}")
 
 
 
 @queue.command()
-@my_global_options
-@click.pass_context
 @click.argument("qname")
 @click.option('--exclusive/--no-exclusive', default=None,
               help='Access type for delivering messages')
@@ -136,118 +152,45 @@ def create(ctx, qname, exclusive, ack_propagation, dmq, egress, ingress, max_bin
               help='When enabled, messages contained in the Queue are delivered in priority order, from 9 (highest) to 0 (lowest). MQTT queues do not support enabling message priority')
 @click.option('--respect-ttl/--no-respect-ttl', default=None,
               help='Respect the time-to-live (TTL) for messages and expired messages are discarded or moved to the DMQ')
-def update(ctx,
-           qname, exclusive, ack_propagation, dmq, egress, ingress, max_bind, max_unacked, max_msg_size, max_spool,
+@my_global_options
+def update(qname,
+           exclusive, ack_propagation, dmq, egress, ingress, max_bind, max_unacked, max_msg_size, max_spool,
            max_redelivery, ttl, owner, perm, low_priority, low_priority_msg_limit, reject_on_discard,
            respect_priority, respect_ttl,
            **kwargs):
-    try:
-        dict = {}
+    '''Update the properties of an existing queue'''
+    upsert(False, qname,
+           exclusive, ack_propagation, dmq, egress, ingress, max_bind, max_unacked, max_msg_size, max_spool,
+           max_redelivery, ttl, owner, perm, low_priority, low_priority_msg_limit, reject_on_discard,
+           respect_priority, respect_ttl,
+           **kwargs)
 
-        if exclusive is not None:
-            dict['accessType'] = 'exclusive' if exclusive else 'non-exclusive'
-        if ack_propagation is not None:
-            dict['consumerAckPropagationEnabled'] = ack_propagation
-        if dmq is not None:
-            dict['deadMsgQueue'] = dmq
-        if egress is not None:
-            dict['egressEnabled'] = egress
-        if ingress is not None:
-            dict['ingressEnabled'] = ingress
-        if max_bind is not None:
-            dict['maxBindCount'] = max_bind
-        if max_unacked is not None:
-            dict['maxDeliveredUnackedMsgsPerFlow'] = max_unacked
-        if max_msg_size is not None:
-            dict['maxMsgSize'] = max_msg_size
-        if max_spool is not None:
-            dict['maxMsgSpoolUsage'] = max_spool
-        if max_redelivery is not None:
-            dict['maxRedeliveryCount'] = max_redelivery
-        if ttl is not None:
-            dict['maxTtl'] = ttl
-        if perm is not None:
-            dict['permission'] = perm_map[perm]
-        if low_priority is not None:
-            dict['rejectLowPriorityMsgEnabled'] = low_priority
-        if low_priority_msg_limit is not None:
-            dict['rejectLowPriorityMsgLimit'] = low_priority_msg_limit
-        if reject_on_discard is not None:
-            dict['rejectMsgToSenderOnDiscardBehavior'] = reject_on_discard
-        if respect_priority is not None:
-            dict['respectMsgPriorityEnabled'] = respect_priority
-        if respect_ttl is not None:
-            dict['respectTtlEnabled'] = respect_ttl
-
-        logging.debug(dict)
-
-        rest_mgr = RestMgr(kwargs)
-        rest_mgr.patch('queues', qname, dict)
-    except Exception as ex:
-        print('ERRROR')
-        logger.error(f"create - END + {ex}")
 
 
 @queue.command()
 @my_global_options
-@click.pass_context
 @click.argument("qname")
-def show(ctx, qname, **kwargs):
-    try:
-        rest_mgr = RestMgr(kwargs)
-        rest_mgr.get('queues', qname)
-    except Exception as ex:
-        print('ERRROR')
-        logger.error(f"create - END + {ex}")
+def show(qname, **kwargs):
+    '''Dump the properties of an existing queue'''
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.get(suburl, qname)
+    send_response(res)
 
 @queue.command()
 @my_global_options
-@click.pass_context
 @click.argument("qname")
-def remove(ctx, qname, **kwargs):
-    try:
-        logger.debug(f"remove {qname}")
-        rest_mgr = RestMgr(kwargs)
-        rest_mgr.delete('queues', qname)
-    except Exception as ex:
-        logger.error(f"{ex}")
+def remove(qname, **kwargs):
+    '''Remove an existing queue'''
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.delete(suburl, qname)
+    send_response(res)
+
 
 @queue.command()
-@click.pass_context
-def clone(ctx, **kwargs):
-    logging.debug(ctx.obj)
-    logging.debug('queue_create')
-
-@queue.command()
-@click.pass_context
-def list(ctx, **kwargs):
-    logging.debug(ctx.obj)
-    logging.debug('queue_create')
-
-@queue.command()
-@click.pass_context
-def subscription(ctx, **kwargs):
-    logging.debug(ctx.obj)
-    logging.debug('queue_create')
-
-
-@queue.group()
-@click.pass_context
-@click.argument('qname')
-def replay(ctx, qname,  **kwargs):
-    logging.debug(ctx.obj)
-    logging.debug(f'replay {qname}')
-
-@replay.command()
-@click.pass_context
-def start(ctx, **kwargs):
-    logging.debug(ctx.obj)
-    logging.debug('replay start')
-
-
-@replay.command()
-@click.pass_context
-def cancel(ctx, **kwargs):
-    logging.debug(ctx.obj)
-    logging.debug('replay cancel')
+@my_global_options
+def list(**kwargs):
+    '''List all the queues'''
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.get(f'{suburl}', None)
+    send_response(res)
 

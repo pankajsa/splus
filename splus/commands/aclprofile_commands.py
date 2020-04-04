@@ -4,16 +4,18 @@ import click
 from common import *
 from managers import RestMgr
 
+suburl = 'aclProfiles'
+
 logger = logging.getLogger(__name__)
 
 
 @click.group()
 def aclprofile():
+    '''Manage the ACL Profiles in a Message VPN'''
     pass
 
-@aclprofile.command(name='create')
+@aclprofile.command()
 @click.argument("name")
-@my_global_options
 @click.option('--default-connect/--no-default-connect', default=True, show_default=True,
               help='The default connect action to take when a client connects to the Message VPN')
 @click.option('--default-publish/--no-default-publish', default=True, show_default=True,
@@ -22,27 +24,23 @@ def aclprofile():
               help='The default subscribe action to take when a client subscribes to a topic')
 @click.option('--default-share/--no-default-share', default=True, show_default=True,
               help='The default connect action to take when a client subscribes to a share-name')
-def aclprofile_create(name, default_connect, default_publish, default_subscribe, default_share, **kwargs):
-    try:
-        logging.debug('start')
-        dict = {
-            'aclProfileName': name,
-            'clientConnectDefaultAction': 'allow' if default_connect else 'disallow',
-            'publishTopicDefaultAction': 'allow' if default_publish else 'disallow',
-            'subscribeTopicDefaultAction': 'allow' if default_subscribe else 'disallow',
-            'subscribeShareNameDefaultAction': 'allow' if default_share else 'disallow',
-        }
-        rest_mgr = RestMgr(kwargs)
-        rest_mgr.post('aclProfiles', dict)
-    except Exception as ex:
-        logger.error(f"create Exception: {ex}")
+@my_global_options
+def create(name, default_connect, default_publish, default_subscribe, default_share, **kwargs):
+    '''Create a new ACL Profile'''
+    dict = {
+        'aclProfileName': name,
+        'clientConnectDefaultAction': 'allow' if default_connect else 'disallow',
+        'publishTopicDefaultAction': 'allow' if default_publish else 'disallow',
+        'subscribeTopicDefaultAction': 'allow' if default_subscribe else 'disallow',
+        'subscribeShareNameDefaultAction': 'allow' if default_share else 'disallow',
+    }
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.post(suburl, dict)
+    send_response(res)
 
 
-
-
-@aclprofile.command(name='update')
+@aclprofile.command()
 @click.argument("name")
-@click.pass_context
 @my_global_options
 @click.option('--default-connect/--no-default-connect', default=None,
               help='The default connect action to take when a client connects to the Message VPN')
@@ -52,52 +50,41 @@ def aclprofile_create(name, default_connect, default_publish, default_subscribe,
               help='The default subscribe action to take when a client subscribes to a topic')
 @click.option('--default-share/--no-default-share', default=None,
               help='The default connect action to take when a client subscribes to a share-name')
-def aclprofile_update(ctx, name, default_connect, default_publish, default_subscribe, default_share, **kwargs):
-    logging.debug('start')
-    try:
-        dict = {}
+def update(name, default_connect, default_publish, default_subscribe, default_share, **kwargs):
+    '''Update an existing ACL Profile'''
+    dict = {}
+    add_if(dict, default_connect, 'clientConnectDefaultAction', 'allow', 'disallow')
+    add_if(dict, default_publish, 'publishTopicDefaultAction', 'allow', 'disallow')
+    add_if(dict, default_subscribe, 'subscribeTopicDefaultAction', 'allow', 'disallow')
+    add_if(dict, default_share, 'subscribeShareNameDefaultAction', 'allow', 'disallow')
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.patch(suburl, name, dict)
+    send_response(res)
 
-        add_if(dict, default_connect, 'clientConnectDefaultAction', 'allow', 'disallow')
-        add_if(dict, default_publish, 'publishTopicDefaultAction', 'allow', 'disallow')
-        add_if(dict, default_subscribe, 'subscribeTopicDefaultAction', 'allow', 'disallow')
-        add_if(dict, default_share, 'subscribeShareNameDefaultAction', 'allow', 'disallow')
-
-        rest_mgr = RestMgr(kwargs)
-        rest_mgr.patch('aclProfiles', name, dict)
-
-        logger.debug(dict)
-    except Exception as ex:
-        logger.error(f"create Exception: {ex}")
-
-@aclprofile.command(name='show')
+@aclprofile.command()
 @click.argument("name")
 @my_global_options
-def aclprofile_show( name, **kwargs):
-    try:
-        rest_mgr = RestMgr(kwargs)
-        rest_mgr.get('aclProfiles', name)
-    except Exception as ex:
-        logger.error(f"{ex}")
+def show( name, **kwargs):
+    '''Show the details of an existing ACL Profile'''
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.get(suburl, name)
+    send_response(res)
 
 
-@aclprofile.command(name='list')
-@click.pass_context
+@aclprofile.command()
 @my_global_options
-def aclprofile_list(ctx, **kwargs):
-    try:
-        rest_mgr = RestMgr(kwargs)
-        rest_mgr.get('aclProfiles')
-    except Exception as ex:
-        logger.error(f"{ex}")
+def list(**kwargs):
+    '''List all the ACL Profiles in the Message VPN'''
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.get(suburl)
+    send_response(res)
 
-@aclprofile.command(name='remove')
+@aclprofile.command()
 @click.argument("name")
 @my_global_options
-def aclprofile_remove(name, **kwargs):
-    try:
-        logger.debug(f"remove {name}")
-        rest_mgr = RestMgr(kwargs)
-        rest_mgr.delete('aclProfiles', name)
-    except Exception as ex:
-        logger.error(f"{ex}")
+def remove(name, **kwargs):
+    '''Remove an ACL Profile'''
+    logger.debug(f"remove {name}")
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.delete(suburl, name)
 

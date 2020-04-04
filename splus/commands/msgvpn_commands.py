@@ -285,7 +285,7 @@ def upsert(is_post, name,
  web_plaintext, web_tls, tls_downgrade,
            **kwargs):
     try:
-        logging.debug('start')
+        # logging.debug('start')
 
         dict = {}
 
@@ -657,17 +657,6 @@ def remove(vpnname, **kwargs):
     send_response(res)
 
 
-import json
-
-def send_response(res):
-    if res['code'] == 3:
-        res_str =  json.JSONEncoder().encode({"error": {"code": 555, "description": res['error']}})
-    elif res['code'] == 0:
-        res_str = json.dumps(res['content'])
-    else:
-        res_str = json.dumps(res['content']['meta'])
-    click.echo(res_str)
-    exit(res['code'])
 
 @msgvpn.command()
 @click.option('-v', '--verbose', count=True, help='Level of verbosity')
