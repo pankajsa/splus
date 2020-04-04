@@ -212,7 +212,9 @@ def msgvpn(**kwargs):
               help='Enable or disable the use of encryption (TLS) for the Web Transport service')
 @click.option('--tls-downgrade/--no-tls-downgrade', default=True, show_default=True,
               help='Enable or disable the allowing of TLS SMF clients to downgrade their connections to plain-text connections')
-@my_global_options
+@click.option('--broker-url', help='MsgVPN URL (default from config file')
+@click.option('--broker-username', help='Admin username (default from config file)')
+@click.option('--broker-password', help='Admin password (default from config file)')
 def create(name,
            alias, basic_authn, basic_authn_profile, basic_radius_domain, basic_authn_type,
            enable_cert_api_username, enable_cert_authn, max_chain_depth, cert_revoke_check, is_cert_user_source_cn,
@@ -394,9 +396,10 @@ def upsert(is_post, name,
 
         rest_mgr = RestMgr(kwargs)
         if is_post:
-            rest_mgr.post(suburl, dict, False)
+            res = rest_mgr.post(suburl, dict, False)
         else:
-            rest_mgr.patch(suburl, name, dict, False)
+            res = rest_mgr.patch(suburl, name, dict, False)
+        send_response(res)
     except Exception as ex:
         logger.error(f"upsert Exception: {ex}")
 
@@ -590,7 +593,9 @@ def upsert(is_post, name,
               help='Enable or disable the use of encryption (TLS) for the Web Transport service')
 @click.option('--tls-downgrade/--no-tls-downgrade', 
               help='Enable or disable the allowing of TLS SMF clients to downgrade their connections to plain-text connections')
-@my_global_options
+@click.option('--broker-url', help='MsgVPN URL (default from config file')
+@click.option('--broker-username', help='Admin username (default from config file)')
+@click.option('--broker-password', help='Admin password (default from config file)')
 def update(name,
            alias, basic_authn, basic_authn_profile, basic_radius_domain, basic_authn_type,
            enable_cert_api_username, enable_cert_authn, max_chain_depth, cert_revoke_check, is_cert_user_source_cn,
@@ -642,25 +647,47 @@ def update(name,
 
 @msgvpn.command()
 @click.argument("vpnname")
-@my_global_options
+@click.option('--broker-url', help='MsgVPN URL (default from config file')
+@click.option('--broker-username', help='Admin username (default from config file)')
+@click.option('--broker-password', help='Admin password (default from config file)')
 def remove(vpnname, **kwargs):
     '''Remove an existing Message VPN'''
     rest_mgr = RestMgr(kwargs)
-    rest_mgr.delete(suburl, vpnname, False)
+    res = rest_mgr.delete(suburl, vpnname, False)
+    send_response(res)
 
+
+import json
+
+def send_response(res):
+    if res['code'] == 3:
+        res_str =  json.JSONEncoder().encode({"error": {"code": 555, "description": res['error']}})
+    elif res['code'] == 0:
+        res_str = json.dumps(res['content'])
+    else:
+        res_str = json.dumps(res['content']['meta'])
+    click.echo(res_str)
+    exit(res['code'])
 
 @msgvpn.command()
-@my_global_options
-def list(**kwargs):
+@click.option('-v', '--verbose', count=True, help='Level of verbosity')
+@click.option('--broker-url', help='MsgVPN URL (default from config file')
+@click.option('--broker-username', help='Admin username (default from config file)')
+@click.option('--broker-password', help='Admin password (default from config file)')
+def list(verbose, **kwargs):
     '''List all the Message VPNs on Solace PubSub+ Broker'''
     rest_mgr = RestMgr(kwargs)
-    res = rest_mgr.get(f'{suburl}?select=msgVpnName', None, False)
+    res = rest_mgr.get(f'{suburl}', None, False)
+    send_response(res)
 
 
 @msgvpn.command()
-@my_global_options
 @click.argument("vpnname")
+@click.option('--broker-url', help='MsgVPN URL (default from config file')
+@click.option('--broker-username', help='Admin username (default from config file)')
+@click.option('--broker-password', help='Admin password (default from config file)')
 def show(vpnname, **kwargs):
     '''Show details of an existing Message VPN'''
     rest_mgr = RestMgr(kwargs)
     res = rest_mgr.get(suburl, vpnname, False)
+    send_response(res)

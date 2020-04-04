@@ -4,6 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 _global_options = [
+    click.option('-v', '--verbose', count=True, help='Level of verbosity'),
     click.option('--default-vpn', help='Name of the MsgVPN (default from config file)', required=False),
     click.option('--broker-url', help='MsgVPN URL (default from config file'),
     click.option('--broker-username', help='Admin username (default from config file)'),

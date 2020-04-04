@@ -1,5 +1,5 @@
 #!/usr/local/bin/python3
-## /usr/local/bin/python3 -m nuitka --follow-imports cli.py
+## /usr/local/bin/python3 -m nuitka --follow-imports splus.py
 import logging.config
 
 import click
@@ -13,12 +13,12 @@ logger = logging.getLogger(__name__)
 @click.group()
 @click.option('--debug/--no-debug', default=True)
 @click.pass_context
-def cli(ctx, debug):
+def splus(ctx, debug):
     """Solace PubSub+ SDK ...a simple command line tool."""
     pass
 
 
-@cli.command()
+@splus.command()
 @click.option('--broker-url', default="http://localhost:8080", show_default=True,
               help='Management URL for the Solace PubSub+ Broker')
 @click.option('--broker-username', required=True, help='Administrative username')
@@ -43,20 +43,20 @@ def config(ctx, default_vpn, broker_url, broker_username, broker_password):
         cfg.write(f"broker-password={broker_password}\n")
 
 
-cli.add_command(msgvpn)
-cli.add_command(aclprofile)
-cli.add_command(clientprofile)
-cli.add_command(clientuser)
-cli.add_command(queue)
-cli.add_command(jndi)
-cli.add_command(replay)
-cli.add_command(rdp)
-# cli.add_command(user)
-# cli.add_command(alert)
-# cli.add_command(broker)
-# cli.add_command(ca)
-# cli.add_command(mesh)
-# cli.add_command(service)
+splus.add_command(msgvpn)
+splus.add_command(aclprofile)
+splus.add_command(clientprofile)
+splus.add_command(clientuser)
+splus.add_command(queue)
+splus.add_command(jndi)
+splus.add_command(replay)
+splus.add_command(rdp)
+# splus.add_command(user)
+# splus.add_command(alert)
+# splus.add_command(broker)
+# splus.add_command(ca)
+# splus.add_command(mesh)
+# splus.add_command(service)
 
 if __name__ == '__main__':
     try:
@@ -65,4 +65,4 @@ if __name__ == '__main__':
     except Exception as ex:
         logging.basicConfig(format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.DEBUG)
         logger = logging.getLogger(__name__)
-    cli()
+    splus()
