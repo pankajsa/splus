@@ -44,7 +44,7 @@ jobs:
         echo REPO ${{github.repository}}
         pwd > a.txt
         mkdir linux
-        python3 -m nuitka --follow-imports splus/splus.py -o ./linux/splus
+        python3 -m nuitka --follow-imports splus/splus.py --standalone -o ./linux/splus
         cd linux
         gzip splus
     - name: Create Release
