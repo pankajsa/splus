@@ -10,7 +10,7 @@ from commands import clientuser
 from commands import jndi
 from commands import msgvpn
 from commands import queue
-from commands import rdp
+# from commands import rdp
 from commands import replay
 
 logger = logging.getLogger(__name__)
@@ -55,7 +55,7 @@ splus.add_command(clientuser)
 splus.add_command(queue)
 splus.add_command(jndi)
 splus.add_command(replay)
-splus.add_command(rdp)
+# splus.add_command(rdp)
 # splus.add_command(user)
 # splus.add_command(alert)
 # splus.add_command(broker)
