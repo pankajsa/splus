@@ -38,7 +38,7 @@ jobs:
     - name: Create Binary
       run: |
         pwd
-        pwd > a.txt
+        touch a.txt
 #        python3 -m nuitka --follow-imports splus/splus.py -o ./dist/splus
     - name: Upload
         uses: actions/upload-release-asset@v1.0.1
