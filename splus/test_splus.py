@@ -139,7 +139,7 @@ def test_clientprofile_remove_fail():
     print('test_clientprofile_remove_fail OK')
 
 
-# test_splus()
+test_splus()
 # test_msgvpn()
 # test_msgvpn_list()
 # test_msgvpn_create()
@@ -156,7 +156,7 @@ def test_clientprofile_remove_fail():
 
 # test_clientprofile_list()
 # test_clientprofile_create()
-test_clientprofile_update()
+# test_clientprofile_update()
 # test_clientprofile_show()
 # test_clientprofile_remove()
 # test_clientprofile_remove_fail()

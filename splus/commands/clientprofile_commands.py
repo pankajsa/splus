@@ -34,7 +34,7 @@ def clientprofile():
               help='Allow clients using the Client Profile to send guaranteed messages')
 @click.option('--enable-shared/-no-enable-shared', default=True, show_default=True,
               help='Enable or disable allowing shared subscriptions')
-@click.option('--enable-tx/-no-enable-tx', default=False, show_default=True,
+@click.option('--enable-tx/--no-enable-tx', default=False, show_default=True,
               help='Enable or disable allowing clients using the Client Profile to establish transacted sessions')
 @click.option('--template-queue', type=str,
               help='Name of a queue template to copy settings from when a new queue is created by a client using the Client Profile')
@@ -193,7 +193,7 @@ def clientprofile_upsert(is_post, name,
               help='Allow clients using the Client Profile to send guaranteed messages')
 @click.option('--enable-shared/-no-enable-shared', default=None,
               help='Enable or disable allowing shared subscriptions')
-@click.option('--enable-tx/-no-enable-tx', default=None,
+@click.option('--enable-tx/--no-enable-tx', default=None,
               help='Enable or disable allowing clients using the Client Profile to establish transacted sessions')
 @click.option('--template-queue', type=str,
               help='Name of a queue template to copy settings from when a new queue is created by a client using the Client Profile')
