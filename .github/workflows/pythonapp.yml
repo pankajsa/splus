@@ -38,7 +38,7 @@ jobs:
     - name: Create Binary
       run: |
         pwd
-        echo ${{github}}
+        echo ${{github.repository}}
         pwd > a.txt
 #        python3 -m nuitka --follow-imports splus/splus.py -o ./dist/splus
     - name: Upload
@@ -46,7 +46,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: https://github.com/pankajsa/splus/tree/master/splus
+        upload_url: ${{github.repository}}
         asset_path: ./a.txt
         asset_name: some-junk.txt
         asset_content_type: binary/octet-stream
