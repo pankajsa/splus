@@ -1,7 +1,9 @@
 import logging
 import click
 
-from common import *
+from common import add_if
+from common import send_response
+from common import my_global_options
 from managers import RestMgr
 
 suburl = 'clientUsernames'
@@ -11,6 +13,7 @@ logger = logging.getLogger(__name__)
 @click.group()
 def clientuser():
     pass
+
 
 @clientuser.command()
 @click.argument("name")
@@ -28,18 +31,18 @@ def clientuser():
               help='Manage the subscription management capability of the Client Username. This is the ability to manage subscriptions on behalf of other Client Usernames.')
 @my_global_options
 def create(
-    name,
-    acl_profile, client_profile, enable, gm_perm_override, password, subscription_manager,
-    **kwargs):
+        name,
+        acl_profile, client_profile, enable, gm_perm_override, password, subscription_manager,
+        **kwargs):
     '''Create a new client username'''
     upsert(True, name,
-        acl_profile, client_profile, enable, gm_perm_override, password, subscription_manager,
-        **kwargs)
+           acl_profile, client_profile, enable, gm_perm_override, password, subscription_manager,
+           **kwargs)
 
 
 def upsert(is_post, name,
-    acl_profile, client_profile, enable, gm_perm_override, password, subscription_manager,
-    **kwargs):
+           acl_profile, client_profile, enable, gm_perm_override, password, subscription_manager,
+           **kwargs):
     dict = {}
 
     add_if(dict, acl_profile, 'clientUsername', name)
@@ -58,7 +61,6 @@ def upsert(is_post, name,
     send_response(res)
 
 
-
 @clientuser.command()
 @click.argument("name")
 @click.option('--acl-profile',
@@ -75,18 +77,19 @@ def upsert(is_post, name,
               help='Manage the subscription management capability of the Client Username. This is the ability to manage subscriptions on behalf of other Client Usernames.')
 @my_global_options
 def update(
-    name,
-    acl_profile, client_profile, enable, gm_perm_override, password, subscription_manager,
-    **kwargs):
+        name,
+        acl_profile, client_profile, enable, gm_perm_override, password, subscription_manager,
+        **kwargs):
     '''Update an existing client username'''
     upsert(False, name,
-        acl_profile, client_profile, enable, gm_perm_override, password, subscription_manager,
-        **kwargs)
+           acl_profile, client_profile, enable, gm_perm_override, password, subscription_manager,
+           **kwargs)
+
 
 @clientuser.command()
 @click.argument("name")
 @my_global_options
-def show( name, **kwargs):
+def show(name, **kwargs):
     '''Show details of an existing client username'''
     rest_mgr = RestMgr(kwargs)
     res = rest_mgr.get(suburl, name)
@@ -101,6 +104,7 @@ def list(**kwargs):
     res = rest_mgr.get(suburl)
     send_response(res)
 
+
 @clientuser.command()
 @click.argument("name")
 @my_global_options
@@ -109,4 +113,3 @@ def remove(name, **kwargs):
     rest_mgr = RestMgr(kwargs)
     res = rest_mgr.delete(suburl, name)
     send_response(res)
-

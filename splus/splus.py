@@ -1,11 +1,17 @@
 #!/usr/local/bin/python3
-## /usr/local/bin/python3 -m nuitka --follow-imports splus.py
+# /usr/local/bin/python3 -m nuitka --follow-imports splus.py
 import logging.config
-
-import click
 import os
 
-from commands import *
+import click
+from commands import aclprofile
+from commands import clientprofile
+from commands import clientuser
+from commands import jndi
+from commands import msgvpn
+from commands import queue
+from commands import rdp
+from commands import replay
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +67,7 @@ if __name__ == '__main__':
     try:
         logging.config.fileConfig(fname='conf/logging.conf', disable_existing_loggers=False)
         logger = logging.getLogger(__name__)
-    except Exception as ex:
+    except Exception:
         logging.basicConfig(format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.DEBUG)
         logger = logging.getLogger(__name__)
     splus()

@@ -1,13 +1,14 @@
 import logging
-import click
 
+import click
+from commands import *
 from common import *
 from managers import RestMgr
-from commands import *
 
 logger = logging.getLogger(__name__)
 
 suburl = 'restDeliveryPoints'
+
 
 @click.group()
 def rdp():
@@ -16,8 +17,6 @@ def rdp():
 
 rdp.add_command(rdp_queue)
 rdp.add_command(rdp_rc)
-
-
 
 
 @rdp.command()

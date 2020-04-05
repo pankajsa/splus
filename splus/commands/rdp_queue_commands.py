@@ -1,14 +1,15 @@
 import logging
-import click
 
+import click
+from commands import *
 from common import *
 from managers import RestMgr
-from commands import *
 
 logger = logging.getLogger(__name__)
 
 suburl1 = 'restDeliveryPoints'
 suburl = 'queueBindings'
+
 
 @click.group(name='queue')
 def rdp_queue():
@@ -73,13 +74,12 @@ def update(
            **kwargs)
 
 
-
 @rdp_queue.command()
 @click.argument("name")
 @my_global_options
 @click.option('--rdp', required=True,
               help='Name of the REST Delivery Point (RDP)')
-def show(name, rdp,  **kwargs):
+def show(name, rdp, **kwargs):
     try:
         rest_mgr = RestMgr(kwargs)
         rest_mgr.get(f'{suburl1}/{rdp}/{suburl}', name)

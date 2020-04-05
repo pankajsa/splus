@@ -1,7 +1,8 @@
 import logging
-import click
 
-from common import *
+import click
+from common import add_if
+from common import send_response
 from managers import RestMgr
 
 logger = logging.getLogger(__name__)
@@ -60,7 +61,7 @@ def msgvpn(**kwargs):
               help='Manage client-username domain trimming for LDAP lookups of client connections. When enabled, the value of $CLIENT_USERNAME (when used for searching) will be truncated at the first occurance of the @ character. For example, if the client-username is in the form of an email address, then the domain portion will be removed')
 @click.option('--ldap-authz-profile',
               help='LDAP Profile to be used for client authorization')
-@click.option('--authz-type', type=click.Choice(['ldap','internal']), default='internal', show_default=True,
+@click.option('--authz-type', type=click.Choice(['ldap', 'internal']), default='internal', show_default=True,
               help='Authorization type to use for clients connecting to the Message VPN.')
 @click.option('--enable-bridge-cn-check/--no-enable-bridge-cn-check', default=True, show_default=True,
               help='Enable or disable validation of the Common Name (CN) in the server certificate from the remote broker. If enabled, the Common Name is checked against the list of Trusted Common Names configured for the Bridge')
@@ -81,7 +82,7 @@ def msgvpn(**kwargs):
 @click.option('--publish-vpn-event/--no-publish-vpn-event',
               default=True, show_default=True,
               help='Enable or disable Message VPN level Event message publishing')
-@click.option('--event-subscription-mode',type=click.Choice(['off', 'on-with-format-v2']),
+@click.option('--event-subscription-mode', type=click.Choice(['off', 'on-with-format-v2']),
               show_default=True,
               help='Subscription level Event message publishing mode')
 @click.option('--enable-mqtt-topics/--no-enable-mqtt-topics', default=False, show_default=True,
@@ -100,7 +101,8 @@ def msgvpn(**kwargs):
 @click.option('--max-ingress-flows', default=16000, show_default=True,
               help='Maximum number of receive flows that can be created')
 @click.option('--max-spool', default=0, show_default=True, help='Maximum message spool usage, in megabytes (MB)')
-@click.option('--max-subscriptions', type=int, help='Maximum number of local client subscriptions (both primary and backup) that can be added')
+@click.option('--max-subscriptions', type=int,
+              help='Maximum number of local client subscriptions (both primary and backup) that can be added')
 @click.option('--max-tx-sessions', type=int, help='Maximum number of transacted sessions that can be created')
 @click.option('--max-tx', type=int, help='Maximum number of transactions that can be created')
 @click.option('--mqtt-retain-mem', default=-1, show_default=True,
@@ -109,9 +111,11 @@ def msgvpn(**kwargs):
               help='IP version to use if DNS lookup contains both an IPv4 and IPv6 address')
 @click.option('--replicate-ack-interval', default=20, show_default=True,
               help='Acknowledgement (ACK) propagation interval for the replication Bridge, in number of replicated messages')
-@click.option('--bridge-username', help='Client Username the replication Bridge uses to login to the remote Message VPN')
+@click.option('--bridge-username',
+              help='Client Username the replication Bridge uses to login to the remote Message VPN')
 @click.option('--bridge-password', help='Password for the Client Username')
-@click.option('--bridge-cert-content', help='PEM formatted content for the client certificate used by this bridge to login to the Remote Message VPN. It must consist of a private key and between one and three certificates comprising the certificate trust chain')
+@click.option('--bridge-cert-content',
+              help='PEM formatted content for the client certificate used by this bridge to login to the Remote Message VPN. It must consist of a private key and between one and three certificates comprising the certificate trust chain')
 @click.option('--bridge-cert-password', help='Password for the client certificate')
 @click.option('--replicate-authn', type=click.Choice(['basic', 'client-certificate']),
               help='Authentication scheme for the replication Bridge in the Message VPN')
@@ -127,7 +131,8 @@ def msgvpn(**kwargs):
               help='Client Profile for the unidirectional replication Bridge in the Message VPN. It is used only for the TCP parameters')
 @click.option('--replicate/--no-replicate', default=False, show_default=True,
               help='Enable or disable replication for the Message VPN')
-@click.option('--replicate-queue', type=click.Choice(['fail-on-existing-queue', 'force-use-existing-queue', 'force-recreate-queue']),
+@click.option('--replicate-queue',
+              type=click.Choice(['fail-on-existing-queue', 'force-use-existing-queue', 'force-recreate-queue']),
               help='Behavior to take when enabling replication for the Message VPN, depending on the existence of the replication Queue')
 @click.option('--replicate-max-spool', default=60000, show_default=True,
               help='Maximum message spool usage by the replication Bridge local Queue (quota), in megabytes')
@@ -167,7 +172,8 @@ def msgvpn(**kwargs):
               help='Enable or disable the use of encryption (TLS) for the AMQP service')
 @click.option('--amqp-tls-port', type=int,
               help='Port number for AMQP clients that connect over TLS. Port must be unique across the message backbone')
-@click.option('--mqtt-max-conn', type=int, help='Maximum number of MQTT client connections that can be simultaneously connected')
+@click.option('--mqtt-max-conn', type=int,
+              help='Maximum number of MQTT client connections that can be simultaneously connected')
 @click.option('--mqtt-plaintext/--no-mqtt-plaintext', default=False, show_default=True,
               help='Enable or disable the plain-text MQTT service in the Message VPN')
 @click.option('--mqtt-port', type=int,
@@ -236,7 +242,7 @@ def create(name,
            rest_plaintext, rest_port, rest_tls, rest_tls_port, rest_gateway_mode,
            rest_max_outgoing_conn, smf_max_conn, smf_plaintext, smf_tls, web_max_conn,
            web_plaintext, web_tls, tls_downgrade,
-        **kwargs):
+           **kwargs):
     '''Create a new Message VPN'''
     upsert(True, name,
            alias, basic_authn, basic_authn_profile, basic_radius_domain, basic_authn_type,
@@ -263,26 +269,26 @@ def create(name,
 
 
 def upsert(is_post, name,
- alias, basic_authn, basic_authn_profile, basic_radius_domain, basic_authn_type,
- enable_cert_api_username, enable_cert_authn, max_chain_depth, cert_revoke_check, is_cert_user_source_cn,
- cert_date_check, enable_kerberos_api_username, enable_kereberos_authn, default_oauth_provider, enable_oauth,
- ldap_attribute_name, trim_ldap_domain, ldap_authz_profile, authz_type,
- enable_bridge_cn_check, max_chain_depth_bridge, cert_date_check_bridge, enable_cache_mgmt,
- dmr, enable, event_log_tag, publish_client_events, publish_vpn_event,
- event_subscription_mode, enable_mqtt_topics, enable_smf_topics, export_subscriptions, jndi,
- max_connections, max_egress_flows, max_endpoints, max_ingress_flows, max_spool, max_subscriptions,
- max_tx_sessions, max_tx, mqtt_retain_mem, ip_version, replicate_ack_interval,
- bridge_username, bridge_password, bridge_cert_content, bridge_cert_password, replicate_authn,
- replicate_compress, replicate_window_size, replicate_retry_delay, tls_replicate, replicate_cp,
- replicate, replicate_queue, replicate_max_spool, replicate_reject_on_discard, reject_on_async,
- replicate_role, replicate_tx_mode, rest_cn_check, rest_cert_max_depth,
- rest_cert_date_check, msgbus_client_admin, msgbus_admin_cache, msgbus_admin,
- msgbus, msgbus_show, amqp_max_conn, amqp_plaintext, amqp_port,
- amqp_tls, amqp_tls_port, mqtt_max_conn, mqtt_plaintext, mqtt_port, mqtt_tls, mqtt_tls_port,
- mqtt_wss, mqtt_wss_port, mqtt_ws, mqtt_ws_port, rest_max_conn,
- rest_plaintext, rest_port, rest_tls, rest_tls_port, rest_gateway_mode,
- rest_max_outgoing_conn, smf_max_conn, smf_plaintext, smf_tls, web_max_conn,
- web_plaintext, web_tls, tls_downgrade,
+           alias, basic_authn, basic_authn_profile, basic_radius_domain, basic_authn_type,
+           enable_cert_api_username, enable_cert_authn, max_chain_depth, cert_revoke_check, is_cert_user_source_cn,
+           cert_date_check, enable_kerberos_api_username, enable_kereberos_authn, default_oauth_provider, enable_oauth,
+           ldap_attribute_name, trim_ldap_domain, ldap_authz_profile, authz_type,
+           enable_bridge_cn_check, max_chain_depth_bridge, cert_date_check_bridge, enable_cache_mgmt,
+           dmr, enable, event_log_tag, publish_client_events, publish_vpn_event,
+           event_subscription_mode, enable_mqtt_topics, enable_smf_topics, export_subscriptions, jndi,
+           max_connections, max_egress_flows, max_endpoints, max_ingress_flows, max_spool, max_subscriptions,
+           max_tx_sessions, max_tx, mqtt_retain_mem, ip_version, replicate_ack_interval,
+           bridge_username, bridge_password, bridge_cert_content, bridge_cert_password, replicate_authn,
+           replicate_compress, replicate_window_size, replicate_retry_delay, tls_replicate, replicate_cp,
+           replicate, replicate_queue, replicate_max_spool, replicate_reject_on_discard, reject_on_async,
+           replicate_role, replicate_tx_mode, rest_cn_check, rest_cert_max_depth,
+           rest_cert_date_check, msgbus_client_admin, msgbus_admin_cache, msgbus_admin,
+           msgbus, msgbus_show, amqp_max_conn, amqp_plaintext, amqp_port,
+           amqp_tls, amqp_tls_port, mqtt_max_conn, mqtt_plaintext, mqtt_port, mqtt_tls, mqtt_tls_port,
+           mqtt_wss, mqtt_wss_port, mqtt_ws, mqtt_ws_port, rest_max_conn,
+           rest_plaintext, rest_port, rest_tls, rest_tls_port, rest_gateway_mode,
+           rest_max_outgoing_conn, smf_max_conn, smf_plaintext, smf_tls, web_max_conn,
+           web_plaintext, web_tls, tls_downgrade,
            **kwargs):
     try:
         # logging.debug('start')
@@ -393,7 +399,6 @@ def upsert(is_post, name,
         add_if(dict, web_tls, 'serviceWebTlsEnabled')
         add_if(dict, tls_downgrade, 'tlsAllowDowngradeToPlainTextEnabled')
 
-
         rest_mgr = RestMgr(kwargs)
         if is_post:
             res = rest_mgr.post(suburl, dict, False)
@@ -404,13 +409,11 @@ def upsert(is_post, name,
         logger.error(f"upsert Exception: {ex}")
 
 
-
-
 @msgvpn.command()
 @click.argument("name")
 @click.option('--alias',
               help='The name of another Message VPN which this Message VPN is an alias for. When this Message VPN is enabled, the alias has no effect. When this Message VPN is disabled, Clients (but not Bridges and routing Links) logging into this Message VPN are automatically logged in to the other Message VPN, and authentication and authorization take place in the context of the other Message VPN.')
-@click.option('--basic-authn/--no-basic-authn', 
+@click.option('--basic-authn/--no-basic-authn',
               help='Enable or disable basic authentication for clients connecting to the Message VPN')
 @click.option('--basic-authn-profile',
               help='Name of the RADIUS or LDAP Profile to use for basic authentication')
@@ -432,46 +435,46 @@ def upsert(is_post, name,
               help='Manage validation of dates in the client certificate')
 @click.option('--enable-kerberos-api-username/--no-enable-kerberos-api-username',
               help='Allow a client to specify a Client Username via the API connect method. When disabled, the Kerberos Principal name is always used')
-@click.option('--enable-kereberos-authn/--no-enable-kereberos-authn', 
+@click.option('--enable-kereberos-authn/--no-enable-kereberos-authn',
               help='Manage Kerberos authentication')
 @click.option('--default-oauth-provider',
               help='Name of the provider to use when the client does not supply a provider name')
-@click.option('--enable-oauth/--no-enable-oauth', 
+@click.option('--enable-oauth/--no-enable-oauth',
               help='Manage OAuth authentication')
 @click.option('--ldap-attribute-name',
               help='Name of the attribute that is retrieved from the LDAP server as part of the LDAP search when authorizing a client connecting to the Message VPN')
-@click.option('--trim-ldap-domain/--no-trim-ldap-domain', 
+@click.option('--trim-ldap-domain/--no-trim-ldap-domain',
               help='Manage client-username domain trimming for LDAP lookups of client connections. When enabled, the value of $CLIENT_USERNAME (when used for searching) will be truncated at the first occurance of the @ character. For example, if the client-username is in the form of an email address, then the domain portion will be removed')
 @click.option('--ldap-authz-profile',
               help='LDAP Profile to be used for client authorization')
-@click.option('--authz-type', type=click.Choice(['ldap','internal']),
+@click.option('--authz-type', type=click.Choice(['ldap', 'internal']),
               help='Authorization type to use for clients connecting to the Message VPN.')
-@click.option('--enable-bridge-cn-check/--no-enable-bridge-cn-check', 
+@click.option('--enable-bridge-cn-check/--no-enable-bridge-cn-check',
               help='Enable or disable validation of the Common Name (CN) in the server certificate from the remote broker. If enabled, the Common Name is checked against the list of Trusted Common Names configured for the Bridge')
 @click.option('--max-chain-depth-bridge', type=int,
               help='Maximum depth of server certificate chain, defined as the number of signing CA certificates that are present in the chain back to a trusted self-signed root CA certificate')
-@click.option('--cert-date-check-bridge/--no-cert-date-check-bridge', 
+@click.option('--cert-date-check-bridge/--no-cert-date-check-bridge',
               help='Manage validation of dates in the client certificate')
-@click.option('--enable-cache-mgmt/--no-enable-cache-mgmt', 
+@click.option('--enable-cache-mgmt/--no-enable-cache-mgmt',
               help='Control managing of cache instances over the message bus')
-@click.option('--dmr/--no-dmr', 
+@click.option('--dmr/--no-dmr',
               help='Enable or disable Dynamic Message Routing (DMR)')
-@click.option('--enable/--no-enable', 
+@click.option('--enable/--no-enable',
               help='Enable or disable the Message VPN')
 @click.option('--event-log-tag', help='A prefix applied to all published Events in the Message VPN')
 @click.option('--publish-client-events/--no-publish-client-events',
               help='Enable or disable Client level Event message publishing')
 @click.option('--publish-vpn-event/--no-publish-vpn-event',
               help='Enable or disable Message VPN level Event message publishing')
-@click.option('--event-subscription-mode',type=click.Choice(['off', 'on-with-format-v2']),
+@click.option('--event-subscription-mode', type=click.Choice(['off', 'on-with-format-v2']),
               help='Subscription level Event message publishing mode')
-@click.option('--enable-mqtt-topics/--no-enable-mqtt-topics', 
+@click.option('--enable-mqtt-topics/--no-enable-mqtt-topics',
               help='Enable or disable Event publish topics in MQTT format')
-@click.option('--enable-smf-topics/--no-enable-smf-topics', 
+@click.option('--enable-smf-topics/--no-enable-smf-topics',
               help='Enable or disable Event publish topics in SMF format.')
-@click.option('--export-subscriptions/--no-export-subscriptions', 
+@click.option('--export-subscriptions/--no-export-subscriptions',
               help='Manage  export of subscriptions in the Message VPN to other routers in the network over Neighbor links')
-@click.option('--jndi/--no-jndi', 
+@click.option('--jndi/--no-jndi',
               help='Enable or disable JNDI access for clients')
 @click.option('--max-connections', type=int, help='Maximum number of client connections')
 @click.option('--max-egress-flows', type=int,
@@ -481,7 +484,8 @@ def upsert(is_post, name,
 @click.option('--max-ingress-flows', type=int,
               help='Maximum number of receive flows that can be created')
 @click.option('--max-spool', type=int, help='Maximum message spool usage, in megabytes (MB)')
-@click.option('--max-subscriptions', type=int, help='Maximum number of local client subscriptions (both primary and backup) that can be added')
+@click.option('--max-subscriptions', type=int,
+              help='Maximum number of local client subscriptions (both primary and backup) that can be added')
 @click.option('--max-tx-sessions', type=int, help='Maximum number of transacted sessions that can be created')
 @click.option('--max-tx', type=int, help='Maximum number of transactions that can be created')
 @click.option('--mqtt-retain-mem', type=int,
@@ -490,88 +494,92 @@ def upsert(is_post, name,
               help='IP version to use if DNS lookup contains both an IPv4 and IPv6 address')
 @click.option('--replicate-ack-interval', type=int,
               help='Acknowledgement (ACK) propagation interval for the replication Bridge, in number of replicated messages')
-@click.option('--bridge-username', help='Client Username the replication Bridge uses to login to the remote Message VPN')
+@click.option('--bridge-username',
+              help='Client Username the replication Bridge uses to login to the remote Message VPN')
 @click.option('--bridge-password', help='Password for the Client Username')
-@click.option('--bridge-cert-content', help='PEM formatted content for the client certificate used by this bridge to login to the Remote Message VPN. It must consist of a private key and between one and three certificates comprising the certificate trust chain')
+@click.option('--bridge-cert-content',
+              help='PEM formatted content for the client certificate used by this bridge to login to the Remote Message VPN. It must consist of a private key and between one and three certificates comprising the certificate trust chain')
 @click.option('--bridge-cert-password', help='Password for the client certificate')
 @click.option('--replicate-authn', type=click.Choice(['basic', 'client-certificate']),
               help='Authentication scheme for the replication Bridge in the Message VPN')
-@click.option('--replicate-compress/--no-replicate-compress', 
+@click.option('--replicate-compress/--no-replicate-compress',
               help='Control the use of compression for the replication bridge')
 @click.option('--replicate-window-size', type=int,
               help='Size of the window used for guaranteed messages published to the replication Bridge, in messages')
 @click.option('--replicate-retry-delay', type=int,
               help='Number of seconds that must pass before retrying the replication Bridge connection')
-@click.option('--tls-replicate/--no-tls-replicate', 
+@click.option('--tls-replicate/--no-tls-replicate',
               help='Enable or disable use of encryption (TLS) for the replication Bridge connection')
 @click.option('--replicate-cp',
               help='Client Profile for the unidirectional replication Bridge in the Message VPN. It is used only for the TCP parameters')
-@click.option('--replicate/--no-replicate', 
+@click.option('--replicate/--no-replicate',
               help='Enable or disable replication for the Message VPN')
-@click.option('--replicate-queue', type=click.Choice(['fail-on-existing-queue', 'force-use-existing-queue', 'force-recreate-queue']),
+@click.option('--replicate-queue',
+              type=click.Choice(['fail-on-existing-queue', 'force-use-existing-queue', 'force-recreate-queue']),
               help='Behavior to take when enabling replication for the Message VPN, depending on the existence of the replication Queue')
 @click.option('--replicate-max-spool', type=int,
               help='Maximum message spool usage by the replication Bridge local Queue (quota), in megabytes')
-@click.option('--replicate-reject-on-discard/--no-replicate-reject-on-discard', 
+@click.option('--replicate-reject-on-discard/--no-replicate-reject-on-discard',
               help='Control whether messages discarded on the replication Bridge local Queue are rejected back to the sender')
-@click.option('--reject-on-async/--no-reject-on-async', 
+@click.option('--reject-on-async/--no-reject-on-async',
               help='Control whether guaranteed messages published to synchronously replicated Topics are rejected back to the sender when synchronous replication becomes ineligible')
 @click.option('--replicate-role', type=click.Choice(['active', 'standby']), default='active', show_default=True,
               help='Replication role for the Message VPN')
 @click.option('--replicate-tx-mode', type=click.Choice(['sync', 'async']), default='sync', show_default=True,
               help='Transaction replication mode for all transactions within the Message VPN. Changing this value during operation will not affect existing transactions; it is only used upon starting a transaction')
-@click.option('--rest-cn-check/--no-rest-cn-check', 
+@click.option('--rest-cn-check/--no-rest-cn-check',
               help='Control validation of the Common Name (CN) in the server certificate from the remote REST Consumer against the list of Trusted CNs configured for the REST Consumer')
 @click.option('--rest-cert-max-depth', type=int,
               help='Maximum depth for a REST Consumer server certificate chain, defined as the number of signing CA certificates that are present in the chain back to a trusted self-signed root CA certificate')
-@click.option('--rest-cert-date-check/--no-rest-cert-date-check', 
+@click.option('--rest-cert-date-check/--no-rest-cert-date-check',
               help='Control validation of dates in the REST Consumer server certificate')
-@click.option('--msgbus-client-admin/--no-msgbus-client-admin', 
+@click.option('--msgbus-client-admin/--no-msgbus-client-admin',
               help='Enable or disable "admin client" SEMP over the message bus commands')
-@click.option('--msgbus-admin-cache/--no-msgbus-admin-cache', 
+@click.option('--msgbus-admin-cache/--no-msgbus-admin-cache',
               help='Enable or disable "admin distributed-cache" SEMP over the message bus commands')
-@click.option('--msgbus-admin/--no-msgbus-admin', 
+@click.option('--msgbus-admin/--no-msgbus-admin',
               help='Enable or disable "admin" SEMP over the message bus commands for the current Message VPN')
-@click.option('--msgbus/--no-msgbus', 
+@click.option('--msgbus/--no-msgbus',
               help='Enable or disable SEMP over the message bus')
-# @click.option('--msgbus-legacy/--no-msgbus-legacy', 
+# @click.option('--msgbus-legacy/--no-msgbus-legacy',
 #             help='Enable or disable "legacy-show-clear" SEMP over the message bus commands (that is, SEMP show and administration requests published to the topic "#P2P/[router name]/#client/SEMP") ')
-@click.option('--msgbus-show/--no-msgbus-show', 
+@click.option('--msgbus-show/--no-msgbus-show',
               help='Enable or disable "show" SEMP over the message bus command')
 @click.option('--amqp-max-conn', type=int,
               help='Maximum number of AMQP client connections that can be simultaneously connected')
-@click.option('--amqp-plaintext/--no-amqp-plaintext', 
+@click.option('--amqp-plaintext/--no-amqp-plaintext',
               help='Enable or disable the plain-text AMQP service in the Message VPN')
 @click.option('--amqp-port', type=int,
               help='Port number for plain-text AMQP clients. Port must be unique across the message backbone')
-@click.option('--amqp-tls/--no-amqp-tls', 
+@click.option('--amqp-tls/--no-amqp-tls',
               help='Enable or disable the use of encryption (TLS) for the AMQP service')
 @click.option('--amqp-tls-port', type=int,
               help='Port number for AMQP clients that connect over TLS. Port must be unique across the message backbone')
-@click.option('--mqtt-max-conn', type=int, help='Maximum number of MQTT client connections that can be simultaneously connected')
-@click.option('--mqtt-plaintext/--no-mqtt-plaintext', 
+@click.option('--mqtt-max-conn', type=int,
+              help='Maximum number of MQTT client connections that can be simultaneously connected')
+@click.option('--mqtt-plaintext/--no-mqtt-plaintext',
               help='Enable or disable the plain-text MQTT service in the Message VPN')
 @click.option('--mqtt-port', type=int,
               help='Port number for plain-text MQTT clients. Port must be unique across the message backbone')
-@click.option('--mqtt-tls/--no-mqtt-tls', 
+@click.option('--mqtt-tls/--no-mqtt-tls',
               help='Enable or disable the use of encryption (TLS) for the MQTT service')
 @click.option('--mqtt-tls-port', type=int,
               help='Port number for MQTT clients that connect over TLS. Port must be unique across the message backbone')
-@click.option('--mqtt-wss/--no-mqtt-wss', 
+@click.option('--mqtt-wss/--no-mqtt-wss',
               help='Enable or disable the use of WebSocket over TLS for the MQTT service')
 @click.option('--mqtt-wss-port', type=int,
               help='Port number for MQTT clients that connect using WebSocket over TLS. Port must be unique across the message backbone')
-@click.option('--mqtt-ws/--no-mqtt-ws', 
+@click.option('--mqtt-ws/--no-mqtt-ws',
               help='Enable or disable the use of WebSocket for the MQTT service')
 @click.option('--mqtt-ws-port', type=int,
               help='Port number for AMQP clients that connect over TLS. Port must be unique across the message backbone')
 @click.option('--rest-max-conn', type=int,
               help='Maximum number of REST incoming client connections that can be simultaneously connected')
-@click.option('--rest-plaintext/--no-rest-plaintext', 
+@click.option('--rest-plaintext/--no-rest-plaintext',
               help='Enable or disable the plain-text REST service for incoming clients')
 @click.option('--rest-port', type=int,
               help='Port number for REST clients. Port must be unique across the message backbone')
-@click.option('--rest-tls/--no-rest-tls', 
+@click.option('--rest-tls/--no-rest-tls',
               help='Enable or disable the use of encryption (TLS) for the REST service')
 @click.option('--rest-tls-port', type=int,
               help='Port number for REST clients that connect over TLS. Port must be unique across the message backbone')
@@ -581,17 +589,17 @@ def upsert(is_post, name,
               help='Maximum number of REST Consumer (outgoing) client connections')
 @click.option('--smf-max-conn', type=int,
               help='Maximum number of SMF client connections that can be simultaneously connected')
-@click.option('--smf-plaintext/--no-smf-plaintext', 
+@click.option('--smf-plaintext/--no-smf-plaintext',
               help='Enable or disable the plain-text SMF service')
-@click.option('--smf-tls/--no-smf-tls', 
+@click.option('--smf-tls/--no-smf-tls',
               help='Enable or disable the use of encryption (TLS) for the SMF service')
 @click.option('--web-max-conn', type=int,
               help='Maximum number of Web Transport client connections that can be simultaneously connected')
-@click.option('--web-plaintext/--no-web-plaintext', 
+@click.option('--web-plaintext/--no-web-plaintext',
               help='Enable or disable the plain-text Web Transport service')
-@click.option('--web-tls/--no-web-tls', 
+@click.option('--web-tls/--no-web-tls',
               help='Enable or disable the use of encryption (TLS) for the Web Transport service')
-@click.option('--tls-downgrade/--no-tls-downgrade', 
+@click.option('--tls-downgrade/--no-tls-downgrade',
               help='Enable or disable the allowing of TLS SMF clients to downgrade their connections to plain-text connections')
 @click.option('--broker-url', help='MsgVPN URL (default from config file')
 @click.option('--broker-username', help='Admin username (default from config file)')
@@ -643,8 +651,6 @@ def update(name,
            **kwargs)
 
 
-
-
 @msgvpn.command()
 @click.argument("vpnname")
 @click.option('--broker-url', help='MsgVPN URL (default from config file')
@@ -655,7 +661,6 @@ def remove(vpnname, **kwargs):
     rest_mgr = RestMgr(kwargs)
     res = rest_mgr.delete(suburl, vpnname, False)
     send_response(res)
-
 
 
 @msgvpn.command()

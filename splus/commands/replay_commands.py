@@ -1,12 +1,13 @@
 import logging
-import click
 
+import click
 from common import *
 from managers import RestMgr
 
 logger = logging.getLogger(__name__)
 
 suburl = 'replayLogs'
+
 
 @click.group()
 def replay():

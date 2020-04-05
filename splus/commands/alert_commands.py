@@ -1,8 +1,7 @@
 import logging
-import click
 
+import click
 from common import *
-from managers import RestMgr
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +17,3 @@ def alert():
 def alert_create(ctx, **kwargs):
     logging.debug(ctx.obj)
     logging.debug('alert_create')
-
-
-

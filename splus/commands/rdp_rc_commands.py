@@ -1,14 +1,15 @@
 import logging
-import click
 
+import click
+from commands import *
 from common import *
 from managers import RestMgr
-from commands import *
 
 logger = logging.getLogger(__name__)
 
 suburl1 = 'restDeliveryPoints'
 suburl = 'restConsumers'
+
 
 @click.group(name='rc')
 def rdp_rc():
@@ -127,11 +128,11 @@ def upsert(is_post, name,
               help='Enable or disable encryption (TLS) to the remote host')
 @my_global_options
 def update(name,
-        password, username, auth_scheme,
-        enable, interface, timeout, pool_size, host, port,
-        retry_delay, tls_cipher_suite, enable_tls,
-        rdp,
-        **kwargs):
+           password, username, auth_scheme,
+           enable, interface, timeout, pool_size, host, port,
+           retry_delay, tls_cipher_suite, enable_tls,
+           rdp,
+           **kwargs):
     upsert(False, name,
            password, username, auth_scheme,
            enable, interface, timeout, pool_size, host, port,
@@ -140,13 +141,12 @@ def update(name,
            **kwargs)
 
 
-
 @rdp_rc.command()
 @click.argument("name")
 @my_global_options
 @click.option('--rdp', required=True,
               help='Name of the REST Delivery Point (RDP)')
-def show(name, rdp,  **kwargs):
+def show(name, rdp, **kwargs):
     try:
         rest_mgr = RestMgr(kwargs)
         rest_mgr.get(f'{suburl1}/{rdp}/{suburl}', name)

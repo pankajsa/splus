@@ -1,7 +1,9 @@
 import logging
 import click
 
-from common import *
+from common import add_if
+from common import send_response
+from common import my_global_options
 from managers import RestMgr
 
 suburl = 'aclProfiles'
@@ -13,6 +15,7 @@ logger = logging.getLogger(__name__)
 def aclprofile():
     '''Manage the ACL Profiles in a Message VPN'''
     pass
+
 
 @aclprofile.command()
 @click.argument("name")
@@ -61,10 +64,11 @@ def update(name, default_connect, default_publish, default_subscribe, default_sh
     res = rest_mgr.patch(suburl, name, dict)
     send_response(res)
 
+
 @aclprofile.command()
 @click.argument("name")
 @my_global_options
-def show( name, **kwargs):
+def show(name, **kwargs):
     '''Show the details of an existing ACL Profile'''
     rest_mgr = RestMgr(kwargs)
     res = rest_mgr.get(suburl, name)
@@ -79,6 +83,7 @@ def list(**kwargs):
     res = rest_mgr.get(suburl)
     send_response(res)
 
+
 @aclprofile.command()
 @click.argument("name")
 @my_global_options
@@ -87,4 +92,4 @@ def remove(name, **kwargs):
     logger.debug(f"remove {name}")
     rest_mgr = RestMgr(kwargs)
     res = rest_mgr.delete(suburl, name)
-
+    send_response(res)

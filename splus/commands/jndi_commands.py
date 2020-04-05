@@ -1,10 +1,14 @@
 import logging
 import click
 
-from common import *
+from common import add_if
+from common import send_response
+from common import my_global_options
 from managers import RestMgr
 
+
 logger = logging.getLogger(__name__)
+
 
 @click.group()
 def jndi():
@@ -93,15 +97,15 @@ def cf():
 @click.option('--xa/--no-xa', default=True, show_default='True',
               help='Enable XA Connection Factory')
 def cf_create(ctx, name, enable_dup_clientid, client_description, client_id, enable_dynamic_durable,
-            enable_dynamic_ttl, receive_ack_timeout, receive_reconnect_count, receive_reconnect_wait,
-            receive_window, receive_window_threshold, send_ack_timeout, send_window,
-            persistent, dmq_eligible, eliding_eligible, enable_jmx_userid,
-            text_as_binary, compression_level, connect_retry_count, connect_retry_per_host_count,
-            connect_timeout, direct_transport, keepalive_count,
-            enable_keepalive, keepalive_interval,
-            enable_callback_io_thread, enable_optimize_for_direct, transport_port, read_timeout, receive_buffer_size,
-            reconnect_retry_count, reconnect_retry_wait, send_buffer_size, tcp_no_delay, xa,
-            **kwargs):
+              enable_dynamic_ttl, receive_ack_timeout, receive_reconnect_count, receive_reconnect_wait,
+              receive_window, receive_window_threshold, send_ack_timeout, send_window,
+              persistent, dmq_eligible, eliding_eligible, enable_jmx_userid,
+              text_as_binary, compression_level, connect_retry_count, connect_retry_per_host_count,
+              connect_timeout, direct_transport, keepalive_count,
+              enable_keepalive, keepalive_interval,
+              enable_callback_io_thread, enable_optimize_for_direct, transport_port, read_timeout, receive_buffer_size,
+              reconnect_retry_count, reconnect_retry_wait, send_buffer_size, tcp_no_delay, xa,
+              **kwargs):
     try:
         logging.debug(f'cf_create {name} {kwargs}')
 
@@ -149,7 +153,6 @@ def cf_create(ctx, name, enable_dup_clientid, client_description, client_id, ena
         logger.debug("create - END")
     except Exception as ex:
         logger.error(f"cf_create - END + {ex}")
-
 
 
 @cf.command(name='update')
@@ -252,7 +255,8 @@ def cf_update(ctx, name, enable_dup_clientid, client_description, client_id, ena
         if receive_reconnect_count is not None: dict['guaranteedReceiveReconnectRetryCount'] = receive_reconnect_count
         if receive_reconnect_wait is not None: dict['guaranteedReceiveReconnectRetryWait'] = receive_reconnect_wait
         if receive_window is not None: dict['guaranteedReceiveWindowSize'] = receive_window
-        if receive_window_threshold is not None: dict['guaranteedReceiveWindowSizeAckThreshold'] = receive_window_threshold
+        if receive_window_threshold is not None: dict[
+            'guaranteedReceiveWindowSizeAckThreshold'] = receive_window_threshold
         if send_ack_timeout is not None: dict['guaranteedSendAckTimeout'] = send_ack_timeout
         if send_window is not None: dict['guaranteedSendWindowSize'] = send_window
         if persistent is not None: dict['messagingDefaultDeliveryMode'] = persistent
@@ -262,13 +266,15 @@ def cf_update(ctx, name, enable_dup_clientid, client_description, client_id, ena
         if text_as_binary is not None: dict['messagingTextInXmlPayloadEnabled'] = text_as_binary
         if compression_level is not None: dict['transportCompressionLevel'] = compression_level
         if connect_retry_count is not None: dict['transportConnectRetryCount'] = connect_retry_count
-        if connect_retry_per_host_count is not None: dict['transportConnectRetryPerHostCount'] = connect_retry_per_host_count
+        if connect_retry_per_host_count is not None: dict[
+            'transportConnectRetryPerHostCount'] = connect_retry_per_host_count
         if connect_timeout is not None: dict['transportConnectTimeout'] = connect_timeout
         if direct_transport is not None: dict['transportDirectTransportEnabled'] = direct_transport
         if keepalive_count is not None: dict['transportKeepaliveCount'] = keepalive_count
         if enable_keepalive is not None: dict['transportKeepaliveEnabled'] = enable_keepalive
         if keepalive_interval is not None: dict['transportKeepaliveInterval'] = keepalive_interval
-        if enable_callback_io_thread is not None: dict['transportMsgCallbackOnIoThreadEnabled'] = enable_callback_io_thread
+        if enable_callback_io_thread is not None: dict[
+            'transportMsgCallbackOnIoThreadEnabled'] = enable_callback_io_thread
         if enable_optimize_for_direct is not None: dict['transportOptimizeDirectEnabled'] = enable_optimize_for_direct
         if transport_port is not None: dict['transportPort'] = transport_port
         if read_timeout is not None: dict['transportReadTimeout'] = read_timeout
@@ -292,12 +298,14 @@ def cf_update(ctx, name, enable_dup_clientid, client_description, client_id, ena
 @click.argument("name")
 def cf_show(ctx, name, **kwargs):
     # try:
-        logging.debug(ctx.obj)
-        rest_mgr = RestMgr(kwargs)
-        res = rest_mgr.get('jndiConnectionFactories', name)
-        logger.debug(res)
-    # except Exception as ex:
-    #     logger.error(f"Exception: {ex}")
+    logging.debug(ctx.obj)
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.get('jndiConnectionFactories', name)
+    logger.debug(res)
+
+
+# except Exception as ex:
+#     logger.error(f"Exception: {ex}")
 
 @cf.command(name='remove')
 @my_global_options
@@ -312,6 +320,7 @@ def remove(ctx, name, **kwargs):
         print('ERRROR')
         logger.error(f"create - END + {ex}")
 
+
 @cf.command(name='list')
 def cf_list():
     pass
@@ -325,4 +334,3 @@ def topic():
 @jndi.command()
 def queue():
     pass
-

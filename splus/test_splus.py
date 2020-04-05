@@ -1,7 +1,9 @@
 from click.testing import CliRunner
+
 from splus import splus
 
 runner = CliRunner()
+
 
 def test_splus():
     result = runner.invoke(splus)
@@ -9,12 +11,14 @@ def test_splus():
     assert result.exit_code == 0
     print('test_splus OK')
 
+
 def test_msgvpn():
     result = runner.invoke(splus, ['msgvpn'])
     # print(result.output)
     # print(f'exit code: {result.exit_code}')
     assert result.exit_code == 0
     print('test_msgvpn OK')
+
 
 def test_msgvpn_list():
     result = runner.invoke(splus, ['msgvpn', 'list'])
@@ -29,6 +33,7 @@ def test_msgvpn_create():
     assert result.exit_code == 0
     print('test_msgvpn_create OK')
 
+
 def test_msgvpn_show():
     result = runner.invoke(splus, ['msgvpn', 'show', 'vpn1'])
     print(f'code: {result.exit_code}, {result.output}')
@@ -41,6 +46,7 @@ def test_msgvpn_update():
     print(f'code: {result.exit_code}, {result.output}')
     assert result.exit_code == 0
     print('test_msgvpn_update OK')
+
 
 def test_msgvpn_remove():
     result = runner.invoke(splus, ['msgvpn', 'remove', 'vpn1'])
@@ -62,6 +68,7 @@ def test_queue_create():
     assert result.exit_code == 0
     print('test_queue_create OK')
 
+
 def test_queue_show():
     result = runner.invoke(splus, ['queue', 'show', 'q1'])
     print(f'code: {result.exit_code}, {result.output}')
@@ -75,11 +82,13 @@ def test_queue_update():
     assert result.exit_code == 0
     print('test_queue_update OK')
 
+
 def test_queue_remove():
     result = runner.invoke(splus, ['queue', 'remove', 'q1'])
     print(f'code: {result.exit_code}, {result.output}')
     assert result.exit_code == 0
     print('test_queue_remove OK')
+
 
 def test_queue_remove_fail():
     result = runner.invoke(splus, ['queue', 'remove', 'q1'])
@@ -101,6 +110,7 @@ def test_clientprofile_create():
     assert result.exit_code == 0
     print('test_clientprofile_create OK')
 
+
 def test_clientprofile_show():
     result = runner.invoke(splus, ['clientprofile', 'show', 'cp1'])
     print(f'code: {result.exit_code}, {result.output}')
@@ -114,11 +124,13 @@ def test_clientprofile_update():
     assert result.exit_code == 0
     print('test_clientprofile_update OK')
 
+
 def test_clientprofile_remove():
     result = runner.invoke(splus, ['clientprofile', 'remove', 'cp1'])
     print(f'code: {result.exit_code}, {result.output}')
     assert result.exit_code == 0
     print('test_clientprofile_remove OK')
+
 
 def test_clientprofile_remove_fail():
     result = runner.invoke(splus, ['clientprofile', 'remove', 'cp1'])
