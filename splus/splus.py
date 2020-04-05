@@ -11,10 +11,9 @@ logger = logging.getLogger(__name__)
 
 
 @click.group()
-@click.option('--debug/--no-debug', default=True)
 @click.pass_context
-def splus(ctx, debug):
-    """Solace PubSub+ SDK ...a simple command line tool."""
+def splus(ctx):
+    """Solace PubSub+ SDK ...a simple command line tool to administer multiple Solace PubSub+ Event Brokers"""
     pass
 
 
@@ -27,7 +26,7 @@ def splus(ctx, debug):
               help='Name of the Message VPN that will be used for all subsequent commands, unless its over-ridden by "--default-vpn" in the other commands')
 @click.pass_context
 def config(ctx, default_vpn, broker_url, broker_username, broker_password):
-    '''Configure the defaults for the SDK. These defaults will be used for all the other commands, unless overridden using the appropriate command line options'''
+    '''Configure the defaults for the SDK'''
     # logger.debug('=====>Debug is %s' % (ctx.obj['DEBUG'] and 'on' or 'off'))
     logger.debug(f"I'll handle the Config {broker_url} {broker_username} {broker_password}")
     """

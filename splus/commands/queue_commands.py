@@ -18,7 +18,7 @@ perm_map ={
 
 @click.group()
 def queue():
-    '''Manage the queues in the Message VPN, which is configured as the default'''
+    '''Manage the queues in a Message VPN'''
     pass
 
 

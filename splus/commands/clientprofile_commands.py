@@ -5,121 +5,122 @@ from common import *
 from managers import RestMgr
 
 logger = logging.getLogger(__name__)
+suburl = 'clientProfiles'
 
 
 @click.group()
 def clientprofile():
+    '''Manage the Client Profiles in a Message VPN'''
     pass
 
-@clientprofile.command(name='create')
+@clientprofile.command()
 @click.argument("name")
-@my_global_options
 @click.option('--enable-bridge/--no-enable-bridge', default=True, show_default=True,
-              help='')
+              help='Manage Bridge clients using the client-profile to connect')
 @click.option('--enable-cut-through/--no-enable-cut-through', default=False, show_default=True,
-              help='')
+              help='Enable or disable allowing clients using the client-profile to bind to endpoints with the cut-through forwarding delivery mode')
 @click.option('--client-create-durability', type=click.Choice(['all', 'durable', 'non-durable']), default='all', show_default=True,
-              help='')
+              help='Types of Queues and Topic Endpoints that clients using the client-profile can create')
 @click.option('--enable-client-endpoint/--no-enable-client-endpoint', default=True, show_default=True,
-              help='')
+              help='Allow clients using the Client Profile to create topic endpoints or queues')
 @click.option('--enable-gm-receive/--no-enable-gm-receive', default=True, show_default=True,
-              help='')
+              help='Allow clients using the Client Profile to receive guaranteed messages')
 @click.option('--enable-gm-send/-no-enable-gm-send', default=True, show_default=True,
-              help='')
+              help='Allow clients using the Client Profile to send guaranteed messages')
 @click.option('--enable-shared/-no-enable-shared', default=True, show_default=True,
-              help='')
-@click.option('--enable-tx/-no-enable-tx', default=True, show_default=True,
-              help='')
+              help='Enable or disable allowing shared subscriptions')
+@click.option('--enable-tx/-no-enable-tx', default=False, show_default=True,
+              help='Enable or disable allowing clients using the Client Profile to establish transacted sessions')
 @click.option('--template-queue', type=str,
-              help='')
+              help='Name of a queue template to copy settings from when a new queue is created by a client using the Client Profile')
 @click.option('--template-topic-endpoint', type=str,
-              help='')
+              help='Name of a topic endpoint template to copy settings from when a new topic endpoint is created by a client using the Client Profile')
 @click.option('--compress/--no-compress', default=True, show_default=True,
-              help='')
+              help='Enable or disable allowing clients using the Client Profile to use compression')
 @click.option('--eliding-delay', default=0, type=int,  show_default=True,
-              help='')
+              help='Amount of time to delay the delivery of messages to clients using the Client Profile after the initial message has been delivered (the eliding delay interval), in milliseconds')
 @click.option('--enable-eliding/--no-eliding', default=True, show_default=True,
-              help='')
+              help='Enable or disable message eliding for clients using the Client Profile')
 @click.option('--eliding-max-topics', default=256, show_default=True,
-              help='')
+              help='Maximum number of topics tracked for message eliding per client connection using the Client Profile')
 @click.option('--max-client-connects', type=int,
-              help='')
+              help='Maximum number of client connections per Client Username')
 @click.option('--max-egress-flows', type=int, default=16000, show_default=True,
-              help='')
+              help='Maximum number of transmit flows that can be created by one client')
 @click.option('--max-client-created-endpoints', type=int, default=16000, show_default=True,
-              help='')
+              help='Maximum number of queues and topic endpoints that can be created by clients with the same Client Username')
 @click.option('--max-ingress-flows', type=int, default=16000, show_default=True,
-              help='')
+              help='Maximum number of receive flows that can be created by one client')
 @click.option('--max-subscriptions', type=int,
-              help='')
+              help='Maximum number of subscriptions per client')
 @click.option('--max-tx-sessions', type=int, default=10, show_default=True,
-              help='')
+              help='Maximum number of transacted sessions that can be created by one client')
 @click.option('--max-client-tx', type=int,
-              help='')
+              help='Maximum number of transactions that can be created by one client')
 @click.option('--reject-no-subscription/--no-reject-no-subscription', default=False, show_default=True,
-              help='')
+              help='Enable or disable the sending of a negative acknowledgement (NACK) to a client when discarding a guaranteed message due to no matching subscription found')
 @click.option('--enable-connect-standby/--no-enable-connect-standby', default=False, show_default=True,
-              help='')
+              help='Allow clients to connect to the Message VPN when its replication state is standby')
 @click.option('--max-client-smf-connects', type=int,
-              help='')
+              help='Maximum number of SMF client connections per Client Username')
 @click.option('--web-inactive-timeout', default=30, show_default=True,
-              help='')
+              help='Timeout for inactive Web Transport client sessions, in seconds')
 @click.option('--max-client-web-connects', type=int,
-              help='')
+              help='Maximum number of Web Transport client connections per Client Username')
 @click.option('--max-web-payload', default=1000000, show_default=True,
-              help='')
+              help='Maximum Web Transport payload size, in bytes, before fragmentation occurs for clients. The size of the header is not included')
 @click.option('--tcp-congestion-size', default=2, show_default=True,
-              help='')
+              help='TCP initial congestion window size for clients, in multiples of the TCP Maximum Segment Size (MSS).')
 @click.option('--tcp-keepalive', default=5, show_default=True,
-              help='')
+              help='Number of TCP keepalive retransmissions to a client before declaring that it is not available')
 @click.option('--tcp-keepalive-idle', default=3, show_default=True,
-              help='')
+              help='Amount of time, in seconds,  a client connection must remain idle before TCP begins sending keepalive probes')
 @click.option('--tcp-keepalive-interval', default=1, show_default=True,
-              help='')
+              help='Amount of time, in seconds,  between TCP keepalive retransmissions to a client when no acknowledgement is received')
 @click.option('--tcp-max-segment-size', default=1460, show_default=True,
-              help='')
+              help='TCP maximum segment size for clients, in kilobytes.')
 @click.option('--tcp-max-window-size', default=256, show_default=True,
-              help='')
-@click.option('--allow-tls-downgrade/--no-tls-allow-downgrade', default=True,
-              help='')
-def clientprofile_create(
-                        name,
-                        enable_bridge, enable_cut_through, client_create_durability,
-                        enable_client_endpoint, enable_gm_receive, enable_gm_send, enable_shared,
-                        enable_tx, template_queue, template_topic_endpoint,
-                        compress, eliding_delay, enable_eliding, eliding_max_topics, max_client_connects, max_egress_flows,
-                        max_client_created_endpoints, max_ingress_flows, max_subscriptions, max_tx_sessions, max_client_tx,
-                        reject_no_subscription, enable_connect_standby, max_client_smf_connects, web_inactive_timeout,
-                        max_client_web_connects, max_web_payload, tcp_congestion_size, tcp_keepalive,
-                        tcp_keepalive_idle, tcp_keepalive_interval, tcp_max_segment_size, tcp_max_window_size,
-                        allow_tls_downgrade,
-                        **kwargs):
+              help='TCP maximum window size for clients, in kilobytes.')
+@click.option('--allow-tls-downgrade/--no-tls-allow-downgrade', default=True, show_default=True,
+              help='Enable or disable allowing a client to downgrade an encrypted connection to plain text')
+@my_global_options
+def create(
+    name,
+    enable_bridge, enable_cut_through, client_create_durability,
+    enable_client_endpoint, enable_gm_receive, enable_gm_send, enable_shared,
+    enable_tx, template_queue, template_topic_endpoint,
+    compress, eliding_delay, enable_eliding, eliding_max_topics, max_client_connects, max_egress_flows,
+    max_client_created_endpoints, max_ingress_flows, max_subscriptions, max_tx_sessions, max_client_tx,
+    reject_no_subscription, enable_connect_standby, max_client_smf_connects, web_inactive_timeout,
+    max_client_web_connects, max_web_payload, tcp_congestion_size, tcp_keepalive,
+    tcp_keepalive_idle, tcp_keepalive_interval, tcp_max_segment_size, tcp_max_window_size,
+    allow_tls_downgrade,
+    **kwargs):
+    '''Create a new client profile'''
     clientprofile_upsert(True, name,
-                         enable_bridge, enable_cut_through, client_create_durability,
-                         enable_client_endpoint, enable_gm_receive, enable_gm_send, enable_shared,
-                         enable_tx, template_queue, template_topic_endpoint,
-                         compress, eliding_delay, enable_eliding, eliding_max_topics, max_client_connects, max_egress_flows,
-                         max_client_created_endpoints, max_ingress_flows, max_subscriptions, max_tx_sessions, max_client_tx,
-                         reject_no_subscription, enable_connect_standby, max_client_smf_connects, web_inactive_timeout,
-                         max_client_web_connects, max_web_payload, tcp_congestion_size, tcp_keepalive,
-                         tcp_keepalive_idle, tcp_keepalive_interval, tcp_max_segment_size, tcp_max_window_size,
-                         allow_tls_downgrade,
-                         **kwargs)
+         enable_bridge, enable_cut_through, client_create_durability,
+         enable_client_endpoint, enable_gm_receive, enable_gm_send, enable_shared,
+         enable_tx, template_queue, template_topic_endpoint,
+         compress, eliding_delay, enable_eliding, eliding_max_topics, max_client_connects, max_egress_flows,
+         max_client_created_endpoints, max_ingress_flows, max_subscriptions, max_tx_sessions, max_client_tx,
+         reject_no_subscription, enable_connect_standby, max_client_smf_connects, web_inactive_timeout,
+         max_client_web_connects, max_web_payload, tcp_congestion_size, tcp_keepalive,
+         tcp_keepalive_idle, tcp_keepalive_interval, tcp_max_segment_size, tcp_max_window_size,
+         allow_tls_downgrade,
+         **kwargs)
 
 
 def clientprofile_upsert(is_post, name,
-                         enable_bridge, enable_cut_through, client_create_durability,
-                         enable_client_endpoint, enable_gm_receive, enable_gm_send, enable_shared,
-                         enable_tx, template_queue, template_topic_endpoint,
-                         compress, eliding_delay, enable_eliding, eliding_max_topics, max_client_connects, max_egress_flows,
-                         max_client_created_endpoints, max_ingress_flows, max_subscriptions, max_tx_sessions, max_client_tx,
-                         reject_no_subscription, enable_connect_standby, max_client_smf_connects, web_inactive_timeout,
-                         max_client_web_connects, max_web_payload, tcp_congestion_size, tcp_keepalive,
-                         tcp_keepalive_idle, tcp_keepalive_interval, tcp_max_segment_size, tcp_max_window_size,
-                         allow_tls_downgrade,
-                         **kwargs):
-    try:
-        logging.debug('start')
+     enable_bridge, enable_cut_through, client_create_durability,
+     enable_client_endpoint, enable_gm_receive, enable_gm_send, enable_shared,
+     enable_tx, template_queue, template_topic_endpoint,
+     compress, eliding_delay, enable_eliding, eliding_max_topics, max_client_connects, max_egress_flows,
+     max_client_created_endpoints, max_ingress_flows, max_subscriptions, max_tx_sessions, max_client_tx,
+     reject_no_subscription, enable_connect_standby, max_client_smf_connects, web_inactive_timeout,
+     max_client_web_connects, max_web_payload, tcp_congestion_size, tcp_keepalive,
+     tcp_keepalive_idle, tcp_keepalive_interval, tcp_max_segment_size, tcp_max_window_size,
+     allow_tls_downgrade,
+     **kwargs):
 
         dict = {}
 
@@ -161,86 +162,85 @@ def clientprofile_upsert(is_post, name,
 
         rest_mgr = RestMgr(kwargs)
         if is_post:
-            rest_mgr.post('clientProfiles', dict)
+            res = rest_mgr.post(suburl, dict)
         else:
-            rest_mgr.patch('clientProfiles', name, dict)
-    except Exception as ex:
-        logger.error(f"create Exception: {ex}")
+            res = rest_mgr.patch(suburl, name, dict)
+        send_response(res)
 
 
 
-@clientprofile.command(name='update')
+@clientprofile.command()
 @click.argument("name")
-@my_global_options
-@click.option('--enable-bridge/--no-enable-bridge', default=True, show_default=True,
-              help='')
-@click.option('--enable-cut-through/--no-enable-cut-through', default=False, show_default=True,
-              help='')
-@click.option('--client-create-durability', type=click.Choice(['all', 'durable', 'non-durable']), default='all', show_default=True,
-              help='')
-@click.option('--enable-client-endpoint/--no-enable-client-endpoint', default=True, show_default=True,
-              help='')
-@click.option('--enable-gm-receive/--no-enable-gm-receive', default=True, show_default=True,
-              help='')
-@click.option('--enable-gm-send/-no-enable-gm-send', default=True, show_default=True,
-              help='')
-@click.option('--enable-shared/-no-enable-shared', default=True, show_default=True,
-              help='')
-@click.option('--enable-tx/-no-enable-tx', default=True, show_default=True,
-              help='')
+@click.option('--enable-bridge/--no-enable-bridge', default=None, 
+              help='Manage Bridge clients using the client-profile to connect')
+@click.option('--enable-cut-through/--no-enable-cut-through', default=None, 
+              help='Enable or disable allowing clients using the client-profile to bind to endpoints with the cut-through forwarding delivery mode')
+@click.option('--client-create-durability', type=click.Choice(['all', 'durable', 'non-durable']),
+              help='Types of Queues and Topic Endpoints that clients using the client-profile can create')
+@click.option('--enable-client-endpoint/--no-enable-client-endpoint', default=None, 
+              help='Allow clients using the Client Profile to create topic endpoints or queues')
+@click.option('--enable-gm-receive/--no-enable-gm-receive', default=None, 
+              help='Allow clients using the Client Profile to receive guaranteed messages')
+@click.option('--enable-gm-send/-no-enable-gm-send', default=None, 
+              help='Allow clients using the Client Profile to send guaranteed messages')
+@click.option('--enable-shared/-no-enable-shared', default=None, 
+              help='Enable or disable allowing shared subscriptions')
+@click.option('--enable-tx/-no-enable-tx', default=None, 
+              help='Enable or disable allowing clients using the Client Profile to establish transacted sessions')
 @click.option('--template-queue', type=str,
-              help='')
+              help='Name of a queue template to copy settings from when a new queue is created by a client using the Client Profile')
 @click.option('--template-topic-endpoint', type=str,
-              help='')
-@click.option('--compress/--no-compress', default=True, show_default=True,
-              help='')
-@click.option('--eliding-delay', type=int, default=0, show_default=True,
-              help='')
-@click.option('--enable-eliding/--no-eliding', default=True, show_default=True,
-              help='')
-@click.option('--eliding-max-topics', default=256, show_default=True,
-              help='')
+              help='Name of a topic endpoint template to copy settings from when a new topic endpoint is created by a client using the Client Profile')
+@click.option('--compress/--no-compress', default=None, 
+              help='Enable or disable allowing clients using the Client Profile to use compression')
+@click.option('--eliding-delay', default=0, type=int,  
+              help='Amount of time to delay the delivery of messages to clients using the Client Profile after the initial message has been delivered (the eliding delay interval), in milliseconds')
+@click.option('--enable-eliding/--no-eliding', default=None, 
+              help='Enable or disable message eliding for clients using the Client Profile')
+@click.option('--eliding-max-topics', default=256, 
+              help='Maximum number of topics tracked for message eliding per client connection using the Client Profile')
 @click.option('--max-client-connects', type=int,
-              help='')
-@click.option('--max-egress-flows', type=int, default=16000, show_default=True,
-              help='')
-@click.option('--max-client-created-endpoints', type=int, default=16000, show_default=True,
-              help='')
-@click.option('--max-ingress-flows', type=int, default=16000, show_default=True,
-              help='')
+              help='Maximum number of client connections per Client Username')
+@click.option('--max-egress-flows', type=int, default=16000, 
+              help='Maximum number of transmit flows that can be created by one client')
+@click.option('--max-client-created-endpoints', type=int, default=16000, 
+              help='Maximum number of queues and topic endpoints that can be created by clients with the same Client Username')
+@click.option('--max-ingress-flows', type=int, default=16000, 
+              help='Maximum number of receive flows that can be created by one client')
 @click.option('--max-subscriptions', type=int,
-              help='')
-@click.option('--max-tx-sessions', type=int, default=10, show_default=True,
-              help='')
+              help='Maximum number of subscriptions per client')
+@click.option('--max-tx-sessions', type=int, default=10, 
+              help='Maximum number of transacted sessions that can be created by one client')
 @click.option('--max-client-tx', type=int,
-              help='')
-@click.option('--reject-no-subscription/--no-reject-no-subscription', default=False, show_default=True,
-              help='')
-@click.option('--enable-connect-standby/--no-enable-connect-standby', default=False, show_default=True,
-              help='')
+              help='Maximum number of transactions that can be created by one client')
+@click.option('--reject-no-subscription/--no-reject-no-subscription', default=None, 
+              help='Enable or disable the sending of a negative acknowledgement (NACK) to a client when discarding a guaranteed message due to no matching subscription found')
+@click.option('--enable-connect-standby/--no-enable-connect-standby', default=None, 
+              help='Allow clients to connect to the Message VPN when its replication state is standby')
 @click.option('--max-client-smf-connects', type=int,
-              help='')
-@click.option('--web-inactive-timeout', default=30, show_default=True,
-              help='')
+              help='Maximum number of SMF client connections per Client Username')
+@click.option('--web-inactive-timeout', type=int,
+              help='Timeout for inactive Web Transport client sessions, in seconds')
 @click.option('--max-client-web-connects', type=int,
-              help='')
-@click.option('--max-web-payload', default=1000000, show_default=True,
-              help='')
-@click.option('--tcp-congestion-size', default=2, show_default=True,
-              help='')
-@click.option('--tcp-keepalive', default=5, show_default=True,
-              help='')
-@click.option('--tcp-keepalive-idle', default=3, show_default=True,
-              help='')
-@click.option('--tcp-keepalive-interval', default=1, show_default=True,
-              help='')
-@click.option('--tcp-max-segment-size', default=1460, show_default=True,
-              help='')
-@click.option('--tcp-max-window-size', default=256, show_default=True,
-              help='')
-@click.option('--allow-tls-downgrade/--no-tls-allow-downgrade', default=True,
-              help='')
-def clientprofile_update(
+              help='Maximum number of Web Transport client connections per Client Username')
+@click.option('--max-web-payload', type=int,
+              help='Maximum Web Transport payload size, in bytes, before fragmentation occurs for clients. The size of the header is not included')
+@click.option('--tcp-congestion-size', type=int,
+              help='TCP initial congestion window size for clients, in multiples of the TCP Maximum Segment Size (MSS).')
+@click.option('--tcp-keepalive', type=int,
+              help='Number of TCP keepalive retransmissions to a client before declaring that it is not available')
+@click.option('--tcp-keepalive-idle', type=int,
+              help='Amount of time, in seconds,  a client connection must remain idle before TCP begins sending keepalive probes')
+@click.option('--tcp-keepalive-interval', default=1, 
+              help='Amount of time, in seconds,  between TCP keepalive retransmissions to a client when no acknowledgement is received')
+@click.option('--tcp-max-segment-size', type=int,
+              help='TCP maximum segment size for clients, in kilobytes.')
+@click.option('--tcp-max-window-size', type=int,
+              help='TCP maximum window size for clients, in kilobytes.')
+@click.option('--allow-tls-downgrade/--no-tls-allow-downgrade', default=None, 
+              help='Enable or disable allowing a client to downgrade an encrypted connection to plain text')
+@my_global_options
+def update(
         name,
         enable_bridge, enable_cut_through, client_create_durability,
         enable_client_endpoint, enable_gm_receive, enable_gm_send, enable_shared,
@@ -252,6 +252,7 @@ def clientprofile_update(
         tcp_keepalive_idle, tcp_keepalive_interval, tcp_max_segment_size, tcp_max_window_size,
         allow_tls_downgrade,
         **kwargs):
+    '''Update an existing client profile'''
     clientprofile_upsert(False, name,
                          enable_bridge, enable_cut_through, client_create_durability,
                          enable_client_endpoint, enable_gm_receive, enable_gm_send, enable_shared,
@@ -265,35 +266,31 @@ def clientprofile_update(
                          **kwargs)
 
 
-@clientprofile.command(name='show')
+@clientprofile.command()
 @click.argument("name")
 @my_global_options
-def clientprofile_show( name, **kwargs):
-    try:
-        rest_mgr = RestMgr(kwargs)
-        rest_mgr.get('clientProfiles', name)
-    except Exception as ex:
-        logger.error(f"{ex}")
+def show(name, **kwargs):
+    '''Show the properties of a client profile'''
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.get(suburl, name)
+    send_response(res)
 
 
-@clientprofile.command(name='list')
-@click.pass_context
+@clientprofile.command()
 @my_global_options
-def clientprofile_list(ctx, **kwargs):
-    try:
-        rest_mgr = RestMgr(kwargs)
-        rest_mgr.get('clientProfiles')
-    except Exception as ex:
-        logger.error(f"{ex}")
+def list(**kwargs):
+    '''List all the client profiles in a Message VPN'''
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.get(suburl)
+    send_response(res)
 
-@clientprofile.command(name='remove')
+@clientprofile.command()
 @click.argument("name")
 @my_global_options
-def clientprofile_remove(name, **kwargs):
-    try:
-        logger.debug(f"remove {name}")
-        rest_mgr = RestMgr(kwargs)
-        rest_mgr.delete('clientProfiles', name)
-    except Exception as ex:
-        logger.error(f"{ex}")
+def remove(name, **kwargs):
+    '''Remove a client profile'''
+    rest_mgr = RestMgr(kwargs)
+    res = rest_mgr.delete(suburl, name)
+    send_response(res)
+
 

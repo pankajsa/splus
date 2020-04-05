@@ -87,13 +87,53 @@ def test_queue_remove_fail():
     assert result.exit_code == 1
     print('test_queue_remove_fail OK')
 
-test_splus()
-test_msgvpn()
-test_msgvpn_list()
-test_msgvpn_create()
-test_msgvpn_update()
-test_msgvpn_show()
-test_msgvpn_remove()
+
+def test_clientprofile_list():
+    result = runner.invoke(splus, ['clientprofile', 'list'])
+    print(f'code: {result.exit_code}, {result.output}')
+    assert result.exit_code == 0
+    print('test_clientprofile_list OK')
+
+
+def test_clientprofile_create():
+    result = runner.invoke(splus, ['clientprofile', 'create', 'cp1'])
+    print(f'code: {result.exit_code}, {result.output}')
+    assert result.exit_code == 0
+    print('test_clientprofile_create OK')
+
+def test_clientprofile_show():
+    result = runner.invoke(splus, ['clientprofile', 'show', 'cp1'])
+    print(f'code: {result.exit_code}, {result.output}')
+    assert result.exit_code == 0
+    print('test_clientprofile_show OK')
+
+
+def test_clientprofile_update():
+    result = runner.invoke(splus, ['clientprofile', 'update', 'cp1', '--no-enable-tx'])
+    print(f'code: {result.exit_code}, {result.output}')
+    assert result.exit_code == 0
+    print('test_clientprofile_update OK')
+
+def test_clientprofile_remove():
+    result = runner.invoke(splus, ['clientprofile', 'remove', 'cp1'])
+    print(f'code: {result.exit_code}, {result.output}')
+    assert result.exit_code == 0
+    print('test_clientprofile_remove OK')
+
+def test_clientprofile_remove_fail():
+    result = runner.invoke(splus, ['clientprofile', 'remove', 'cp1'])
+    print(f'code: {result.exit_code}, {result.output}')
+    assert result.exit_code == 1
+    print('test_clientprofile_remove_fail OK')
+
+
+# test_splus()
+# test_msgvpn()
+# test_msgvpn_list()
+# test_msgvpn_create()
+# test_msgvpn_update()
+# test_msgvpn_show()
+# test_msgvpn_remove()
 
 # test_queue_list()
 # test_queue_create()
@@ -101,3 +141,10 @@ test_msgvpn_remove()
 # test_queue_show()
 # test_queue_remove()
 # test_queue_remove_fail()
+
+# test_clientprofile_list()
+# test_clientprofile_create()
+test_clientprofile_update()
+# test_clientprofile_show()
+# test_clientprofile_remove()
+# test_clientprofile_remove_fail()
