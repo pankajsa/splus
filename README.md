@@ -16,7 +16,7 @@ While there are already so many ways of managing the broker, the motivation for 
 ## Commands
 splus <command> <subcommand> <options and parameters>
 
-For now, the self executable isnt created so the prerequisite is to have python3 on your machine and invoke the commands using cli.py. 
+For now, the self executable isnt created so the prerequisite is to have python3 on your machine and invoke the commands using splus.py. 
 So in all examples below replace _splus_ with _python splus.py_
 
 
