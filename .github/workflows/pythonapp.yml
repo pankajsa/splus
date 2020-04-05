@@ -43,7 +43,10 @@ jobs:
         echo REPO ${{github.repository}}
         echo REPO ${{github.repository}}
         pwd > a.txt
-#        python3 -m nuitka --follow-imports splus/splus.py -o ./dist/splus
+        mkdir linux
+        python3 -m nuitka --follow-imports splus/splus.py -o ./linux/splus
+        cd linux
+        gzip splus
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -61,6 +64,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./a.txt
-        asset_name: mya.txt
+        asset_path: ./linux/splus.gz
+        asset_name: splus.gz
         asset_content_type: binary/octet-stream
