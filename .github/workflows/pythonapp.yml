@@ -67,6 +67,7 @@ jobs:
         run: |
           echo 1
           ls -R
+          cd splus
           pyinstaller --onefile splus.py
           echo 2
           ls -R
