@@ -2,7 +2,7 @@ import json
 import logging
 
 import click
-
+from sys import exit
 logger = logging.getLogger(__name__)
 
 _global_options = [
