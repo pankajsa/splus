@@ -33,8 +33,6 @@ jobs:
         run: |
           pwd
           cd splus
-#          pwd
-#          touch splus-mac.tar.gz
           pyinstaller splus.py
           tar -C dist -cvf splus-mac.tar  .
           gzip splus-mac.tar
@@ -97,8 +95,6 @@ jobs:
         run: |
           pwd
           cd splus
-#          pwd
-#          touch  splus-linux.tar.gz
           pyinstaller splus.py
           tar -C dist -cvf splus-mac.tar  .
           gzip splus-mac.tar
@@ -131,8 +127,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: v0.1-alpha-1
+          release_name: Release v0.1-alpha-1
           draft: true
           prerelease: true
       - name: Debug
