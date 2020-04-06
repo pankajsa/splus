@@ -66,13 +66,13 @@ jobs:
       - name: Create Binary
         run: |
           echo 1
-          dir /s
-          pyinstaller splus.py
+          ls -R
+          pyinstaller --onefile splus.py
           echo 2
-          dir /s
+          ls -R
           tar -C dist -cvf splus-mac.tar  .
           echo 3
-          dir /s
+          ls -R
           gzip splus-mac.tar
       - name: Upload Binary
         uses: actions/upload-artifact@v1
