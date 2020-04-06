@@ -96,8 +96,8 @@ jobs:
           pwd
           cd splus
           pyinstaller splus.py
-          tar -C dist -cvf splus-mac.tar  .
-          gzip splus-mac.tar
+          tar -C dist -cvf splus-linux.tar  .
+          gzip splus-linux.tar
       - name: Upload Binary
         uses: actions/upload-artifact@v1
         with:
