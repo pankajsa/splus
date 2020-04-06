@@ -65,8 +65,14 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=500 --statistics
       - name: Create Binary
         run: |
+          echo 1
+          dir /s
           pyinstaller splus.py
+          echo 2
+          dir /s
           tar -C dist -cvf splus-mac.tar  .
+          echo 3
+          dir /s
           gzip splus-mac.tar
       - name: Upload Binary
         uses: actions/upload-artifact@v1
