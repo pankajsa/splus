@@ -196,7 +196,7 @@ jobs:
           pwd
           ls -lR
       - name: Release Mac Binary
-        id: upload-release-asset
+        id: upload-release-asset-1
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -206,7 +206,7 @@ jobs:
           asset_name: splus-mac.tar.gz
           asset_content_type: binary/octet-stream
       - name: Release Linux Binary
-        id: upload-release-asset
+        id: upload-release-asset-2
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
