@@ -10,6 +10,25 @@ on:
     branches: [ master ]
 
 jobs:
+  tagging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: true
+
   build-mac:
     runs-on: macos-latest
     steps:
@@ -39,25 +58,15 @@ jobs:
           gzip splus-mac.tar
       #        python3 -m nuitka --follow-imports splus.py
       #        gzip splus.bin
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: true
-          prerelease: true
       - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ jobs.tagging.steps.create_release.outputs.upload_url }}
           asset_path: ./splus/splus-mac.tar.gz
-          asset_name: splus-mac.bin.gz
+          asset_name: splus-mac.tar.gz
           asset_content_type: binary/octet-stream
 
   build-linux:
@@ -105,7 +114,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: ${{ jobs.tagging.steps.create_release.outputs.upload_url }}
         asset_path: ./splus/splus.tar.gz
-        asset_name: splus.bin.gz
+        asset_name: splus.tar.gz
         asset_content_type: binary/octet-stream
+
