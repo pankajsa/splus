@@ -37,13 +37,11 @@ jobs:
           pyinstaller splus.py
           tar -C dist -cvf splus-mac.tar  .
           gzip splus-mac.tar
-      #        python3 -m nuitka --follow-imports splus.py
-      #        gzip splus.bin
       - name: Upload binary
-          uses: actions/upload-artifact@v1
-          with:
-            name: splus-linux
-            path: ./splus/splus-mac.tar.gz
+        uses: actions/upload-artifact@v1
+        with:
+          name: splus-linux
+          path: ./splus/splus-mac.tar.gz
 #      - name: Create Release
 #        id: create_release
 #        uses: actions/create-release@v1
