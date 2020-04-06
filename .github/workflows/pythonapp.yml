@@ -117,9 +117,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Download math result for job 2
-          uses: actions/download-artifact@v1
-          with:
-            name: splus-linux
+        uses: actions/download-artifact@v1
+        with:
+          name: splus-linux
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
