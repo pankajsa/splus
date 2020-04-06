@@ -38,15 +38,13 @@ jobs:
     - name: Create Binary
       run: |
         pwd
-        echo REPO ${{github.repository}}
-        echo REF ${{github.ref}}
-        echo REPO ${{github.repository}}
-        echo REPO ${{github.repository}}
-        pwd > a.txt
         cd splus
         pwd
-        python3 -m nuitka --follow-imports splus.py
-        gzip splus.bin
+        pyinstaller splus.py
+        tar -C dist -cvf splus.tar  .
+        gzip splus.tar
+#        python3 -m nuitka --follow-imports splus.py
+#        gzip splus.bin
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -64,6 +62,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./splus/splus.bin.gz
+        asset_path: ./splus/splus.tar.gz
         asset_name: splus.bin.gz
         asset_content_type: binary/octet-stream
