@@ -74,12 +74,11 @@ jobs:
           tar -C dist -cvf splus-mac.tar  .
           echo 3
           ls -R
-          gzip splus-mac.tar
       - name: Upload Binary
         uses: actions/upload-artifact@v1
         with:
           name: splus-win
-          path: ./splus/splus-win.tar.gz
+          path: ./splus/dist/splus.exe
 
 
   build-linux:
@@ -167,8 +166,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: splus-win/splus-win.tar.gz
-          asset_name: splus-win.tar.gz
+          asset_path: splus-win/splus.exe
+          asset_name: splus.exe
           asset_content_type: binary/octet-stream
       - name: Release Linux Binary
         id: upload-release-asset-3
