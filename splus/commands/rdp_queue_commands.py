@@ -1,9 +1,9 @@
 import logging
 
 import click
-from commands import *
-from common import *
-from managers import RestMgr
+from splus.commands import *
+from splus.common import *
+from splus.managers import RestMgr
 
 logger = logging.getLogger(__name__)
 

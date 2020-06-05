@@ -1,7 +1,7 @@
 import logging
 
 import click
-from common import *
+from splus.common import *
 
 logger = logging.getLogger(__name__)
 

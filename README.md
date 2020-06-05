@@ -13,17 +13,25 @@ While there are already so many ways of managing the broker, the motivation for 
 * event mesh management
 * align with the sdk cli approach used by modern solution including AWS, GCloud etc
 
+## Installation
+This is a _python_ application and needs python v3.x
+
+Clone the repository and install the tool
+`pip3 install . `
+
+Since this tool configures a Solace PubSub+ Broker its assumed that you already have access to a Solace Broker
+e.g. 
+```
+docker run -d -p 8080:8080 -p 55555:55555 -p:80:8008 -p:1883:1883 -p:8000:8000 -p:5672:5672 -p:9000:9000 -p:2222:2222 --shm-size=2g --env username_admin_globalaccesslevel=admin --env username_admin_password=admin --name=solace solace/solace-pubsub-standard
+```
 ## Commands
 splus <command> <subcommand> <options and parameters>
 
-For now, the self executable isnt created so the prerequisite is to have python3 on your machine and invoke the commands using splus.py. 
-So in all examples below replace _splus_ with _python splus.py_
-
 
 e.g.  
-python splus.py --help  
-python splus.py create myvpn1  
-python splus.py config --default-cpn http://localhost:8080 --broker-user admin --broker-password admin  
+splus --help  
+splus config --broker-url http://localhost:8080 --broker-username admin --broker-password admin 
+splus msgvpn create myvpn1  
 
 ### Global Options
 --msgvpn  

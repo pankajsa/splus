@@ -1,10 +1,10 @@
 import logging
 import click
 
-from common import add_if
-from common import send_response
-from common import my_global_options
-from managers import RestMgr
+from splus.common import add_if
+from splus.common import send_response
+from splus.common import my_global_options
+from splus.managers import RestMgr
 
 
 logger = logging.getLogger(__name__)

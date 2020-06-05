@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/splus.iml" filepath="$PROJECT_DIR$/splus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/splus.iml" filepath="$PROJECT_DIR$/.idea/splus.iml" />
     </modules>
   </component>
 </project>

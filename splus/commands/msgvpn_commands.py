@@ -1,9 +1,9 @@
 import logging
-
 import click
-from common import add_if
-from common import send_response
-from managers import RestMgr
+
+from splus.common import add_if
+from splus.common import send_response
+from splus.managers import RestMgr
 
 logger = logging.getLogger(__name__)
 
