@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 @click.group()
 @click.pass_context
 def splus(ctx):
+
     """Solace PubSub+ SDK ...a simple command line tool to administer multiple Solace PubSub+ Event Brokers"""
     pass
 
@@ -75,8 +76,9 @@ def cli():
     except Exception:
         logging.basicConfig(format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.DEBUG)
         logger = logging.getLogger(__name__)
-    splus()
 
+cli()
 if __name__ == '__main__':
-    cli()
+    splus()
     # pass
+

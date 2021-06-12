@@ -7,22 +7,23 @@ runner = CliRunner()
 
 def test_splus():
     result = runner.invoke(splus)
-    # print(result.output)
+    print(result.output)
     assert result.exit_code == 0
     print('test_splus OK')
 
 
 def test_msgvpn():
     result = runner.invoke(splus, ['msgvpn'])
-    # print(result.output)
-    # print(f'exit code: {result.exit_code}')
+    print(result)
+    print(f'exit code: {result.exit_code}')
     assert result.exit_code == 0
     print('test_msgvpn OK')
 
 
 def test_msgvpn_list():
-    result = runner.invoke(splus, ['msgvpn', 'list'])
-    # print(f'code: {result.exit_code}, {result.output}')
+    result = runner.invoke(splus, ['msgvpn','list'])
+    print(result.output)
+    print(f'code: {result.exit_code}, {result.output}')
     assert result.exit_code == 0
     print('test_msgvpn_list OK')
 
@@ -140,12 +141,12 @@ def test_clientprofile_remove_fail():
 
 
 test_splus()
-# test_msgvpn()
-# test_msgvpn_list()
-# test_msgvpn_create()
-# test_msgvpn_update()
-# test_msgvpn_show()
-# test_msgvpn_remove()
+test_msgvpn()
+test_msgvpn_list()
+test_msgvpn_create()
+test_msgvpn_update()
+test_msgvpn_show()
+test_msgvpn_remove()
 
 # test_queue_list()
 # test_queue_create()
