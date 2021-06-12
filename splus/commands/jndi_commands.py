@@ -1,8 +1,8 @@
 import logging
 import click
 
-from splus.common import my_global_options
-from splus.managers import RestMgr
+from common import my_global_options
+from managers import RestMgr
 
 
 logger = logging.getLogger(__name__)

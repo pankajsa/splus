@@ -4,14 +4,17 @@ import logging.config
 import os
 
 import click
-from splus.commands import aclprofile
-from splus.commands import clientprofile
-from splus.commands import clientuser
-from splus.commands import jndi
-from splus.commands import msgvpn
-from splus.commands import queue
-# from commands import rdp
-from splus.commands import replay
+import commands
+
+
+# from .commands import aclprofile
+# from splus.commands import clientprofile
+# from splus.commands import clientuser
+# from splus.commands import jndi
+# from splus.commands import msgvpn
+# from splus.commands import queue
+# # from commands import rdp
+# from splus.commands import replay
 
 logger = logging.getLogger(__name__)
 
@@ -49,13 +52,16 @@ def config(ctx, default_vpn, broker_url, broker_username, broker_password):
 
 
 def cli():
-    splus.add_command(msgvpn)
-    splus.add_command(aclprofile)
-    splus.add_command(clientprofile)
-    splus.add_command(clientuser)
-    splus.add_command(queue)
-    splus.add_command(jndi)
-    splus.add_command(replay)
+    splus.add_command(commands.msgvpn)
+    splus.add_command(commands.aclprofile)
+    splus.add_command(commands.clientprofile)
+    splus.add_command(commands.clientuser)
+    splus.add_command(commands.queue)
+    splus.add_command(commands.jndi)
+    splus.add_command(commands.replay)
+
+
+    ######-------already commented
     # splus.add_command(rdp)
     # splus.add_command(user)
     # splus.add_command(alert)
@@ -73,3 +79,4 @@ def cli():
 
 if __name__ == '__main__':
     cli()
+    # pass
