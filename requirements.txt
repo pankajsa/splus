@@ -7,7 +7,7 @@ flake8==3.7.9
 idna==2.9
 macholib==1.14
 mccabe==0.6.1
-Nuitka==0.6.7
+Nuitka==0.9
 pycodestyle==2.5.0
 pyflakes==2.1.1
 PyInstaller==3.6
