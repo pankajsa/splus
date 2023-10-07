@@ -11,5 +11,5 @@ Nuitka==0.9
 pycodestyle==2.5.0
 pyflakes==2.1.1
 PyInstaller==3.6
-requests==2.25.1
+requests==2.31.0
 urllib3==1.26.5
